@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#db5945">
+    <title>秋名山加油站</title>
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="./site.min.css" rel="stylesheet">
+</head>
+<body class="home-template">
+<header class="site-header jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12"><h1>加油站</h1>
+                <div class="form-group">
+                    <input type="text" class="form-control search" placeholder="搜索车牌，例如：ABS-130" id="input" name="code"
+                           autocomplete="off" spellcheck="false">
+                    <i class="fa fa-search" onclick="search($('#input').val(), $('.active').attr('id'));"></i>
+                </div>
+                <div class="btn-group" data-toggle="buttons">
+                    <label class="btn btn-default active" id="normal">
+                        <input type="radio" name="options" autocomplete="off">正常
+                    </label>
+                    <label class="btn btn-default" id="magnet">
+                        <input type="radio" name="options" autocomplete="off">只搜磁链
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container" id="result">
+
+</div>
+
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    function search(code, mode) {
+        $('#result').html('<h1>Loading~</h1><div class="progress progress-striped active"><div class="progress-bar progress-bar-info" style="width: 100%;"></div></div>');
+        $.post('//free.yii2.cc/xxoo/ajax.php', {'code': code, 'mode': mode}, function (data) {
+            $('#result').html(data);
+        });
+    }
+
+    $('#input').keydown(function (event) {
+        var mode = $('.active').attr('id');  // normal || magnet
+        var code = $('#input').val();
+        if (event.keyCode == 13) {
+            search(code, mode);
+        }
+    });
+</script>
+</body>
+</html>
