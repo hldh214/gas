@@ -1,4 +1,4 @@
 # Gas station
 
 
-[Demo](http://free.yii2.cc/xxoo)
+[Demo](http://yii2.cc.md-hk-7.webhostbox.net/free/xxoo/)
