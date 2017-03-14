@@ -1,4 +1,2 @@
-#THIS REPO IS DEPRECATED
-
-## Gas station
+## Gas station with Docker <3
 

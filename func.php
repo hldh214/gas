@@ -1,6 +1,6 @@
 <?php
 /**
- * Gas station V1.3
+ * Gas station V1.4
  */
 
 /**
@@ -14,15 +14,15 @@ function get_magnet($code, $hd = true)
 {
     // 要求输入必须严格, 例ABS-130, 反之则可能导致结果不精确
     $query_url = 'http://www.javbus.com/' . $code;
-    $bt_url = 'https://www.torrentkitty.tv/search/' . $code;  // 搜索磁力链接url(备用)(不精确)
+    $bt_url    = 'https://www.torrentkitty.tv/search/' . $code;  // 搜索磁力链接url(备用)(不精确)
 
     $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
-    $gid_pattern = '/gid *= *(\d+)/';
-    $uc_pattern = '/uc *= *(\d+);/';
+    $gid_pattern   = '/gid *= *(\d+)/';
+    $uc_pattern    = '/uc *= *(\d+);/';
     // 以上三个正则用于匹配ajax查询jab_bus上的磁链所需要的参数
 
-    $magnet_pattern = '#<a href="(magnet:\?xt=urn:btih:\w{40}).*?".+?rel="magnet">Open</a>#';  // 用于匹配 $bt_url 中搜索结果的正则
-    $hd_mag_pattern = '/href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+\s*<a class="btn btn-mini-new btn-primary disabled"/';  // 用于匹配javbus高清搜索结果的正则
+    $magnet_pattern     = '#<a href="(magnet:\?xt=urn:btih:\w{40}).*?".+?rel="magnet">Open</a>#';  // 用于匹配 $bt_url 中搜索结果的正则
+    $hd_mag_pattern     = '/href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+\s*<a class="btn btn-mini-new btn-primary disabled"/';  // 用于匹配javbus高清搜索结果的正则
     $normal_mag_pattern = '/window\.open\(\'(magnet:\?xt=urn:btih:\w{40}).*?_self\'\)/';  // 用于匹配javbus标清搜索结果的正则
 
     $res = file_get_contents($query_url);
@@ -94,10 +94,10 @@ function get_info($code)
     $query_url = 'http://www.javbus.com/' . $code;
 
     $title_pattern = '/<h3>(.+)<\/h3>/';
-    $date_pattern = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
-    $star_pattern = '/<div class="star-name">.+title="(.+)"/';
+    $date_pattern  = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
+    $star_pattern  = '/<div class="star-name">.+title="(.+)"/';
     $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
-    $pic_pattern = '/<a class="sample-box" href="(.+?)">/';
+    $pic_pattern   = '/<a class="sample-box" href="(.+?)">/';
 
     $res = file_get_contents($query_url);
 
@@ -145,7 +145,7 @@ function get_info($code)
  */
 function make_preview($picUrl, $code, $dirName = 'preview')
 {
-    $path = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
+    $path     = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
     $filename = $code . '.html';
     if (!file_exists($path . $filename) || (filesize($path . $filename) === 0)) {
         $result = '';
@@ -168,8 +168,9 @@ function make_preview($picUrl, $code, $dirName = 'preview')
  */
 function get_img($picUrl, $dirName = 'tmp')
 {
-    $path = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
-    $filename = end(explode('/', $picUrl));
+    $path      = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
+    $picUrlArr = explode('/', $picUrl);
+    $filename  = end($picUrlArr);
     if (!file_exists($path . $filename) || (filesize($path . $filename) === 0)) {
         touch($path . $filename);
         file_put_contents($path . $filename, file_get_contents($picUrl));
@@ -231,12 +232,12 @@ function origin_query($code)
                     $response = "你是不是要找:";
                     sort($movie_match[1]);  // 按照号码大小排序, 默认顺序是按照影片热门度排序的
                     foreach ($movie_match[1] as $v) {
-                        $arr = explode('/', $v);
+                        $arr      = explode('/', $v);
                         $response = $response . "\n" . $arr[3];
                     }
                     sort($unmovie_match[1]);  // 按照号码大小排序, 默认顺序是按照影片热门度排序的
                     foreach ($unmovie_match[1] as $v) {
-                        $arr = explode('/', $v);
+                        $arr      = explode('/', $v);
                         $response = $response . "\n" . $arr[3];
                     }
                 }
