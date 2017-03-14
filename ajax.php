@@ -8,9 +8,7 @@ if (!empty($_POST)) {
     $mode = $_POST['mode'];
     if ($mode == 'normal') {
         $result = origin_query($code);
-        $result = mb_split("\n", $result);
-        $result = implode('<br />', $result);
-        echo $result;
+        echo nl2br($result);
     } elseif ($mode == 'magnet') {
         // 只查询磁链
         echo get_magnet($code);
