@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 MAINTAINER Jim "https://github.com/hldh214"
 
 RUN apt-get update
-RUN apt-get install -y nginx php supervisor
+RUN apt-get install -y nginx php7.0-fpm php7.0-mbstring supervisor
 
 RUN mkdir -p /var/log/supervisor
 RUN mkdir -p /run/php
