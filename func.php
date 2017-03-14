@@ -156,7 +156,7 @@ function make_preview($picUrl, $code, $dirName = 'preview')
         file_put_contents($path . $filename, $result);
     }
 
-    return 'http://' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
+    return '//' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
 }
 
 /**
@@ -176,7 +176,7 @@ function get_img($picUrl, $dirName = 'tmp')
         file_put_contents($path . $filename, file_get_contents($picUrl));
     }
 
-    return 'http://' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
+    return '//' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
 }
 
 /**
