@@ -1,6 +1,8 @@
 <?php
 /**
- * Gas station V1.4
+ * Gas station V1.5
+ *
+ * TODO: rework
  */
 
 /**
@@ -25,7 +27,7 @@ function get_magnet($code, $hd = true)
     $hd_mag_pattern     = '/href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+\s*<a class="btn btn-mini-new btn-primary disabled"/';  // 用于匹配javbus高清搜索结果的正则
     $normal_mag_pattern = '/window\.open\(\'(magnet:\?xt=urn:btih:\w{40}).*?_self\'\)/';  // 用于匹配javbus标清搜索结果的正则
 
-    $res = file_get_contents($query_url);
+    $res = unsafe_fgc($query_url);
 
     preg_match($gid_pattern, $res, $gid_match);
     preg_match($uc_pattern, $res, $uc_match);
@@ -34,7 +36,7 @@ function get_magnet($code, $hd = true)
     $get_magnet_url = 'https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=' . $gid_match[1] . '&lang=zh&img=' . $cover_match[1] . '&uc=' . $uc_match[1] . '&floor=' . rand(1, 1000);
 
     // 伪造ajax查询所必要的headers
-    $res = file_get_contents($get_magnet_url, false, stream_context_create(array('http' => array('header' => "Referer: https://www.javbus.com\r\nCookie: existmag=mag\r\n"))));
+    $res = unsafe_fgc($get_magnet_url, "Referer: https://www.javbus.com\r\nCookie: existmag=mag\r\n");
 
     preg_match_all($hd_mag_pattern, $res, $hd_mag_match);
     preg_match_all($normal_mag_pattern, $res, $normal_mag_match);
@@ -50,7 +52,7 @@ function get_magnet($code, $hd = true)
             } else {
                 // javbus页面找不到磁链, 只好去 $bt_url 找, 结果可能不精确
 
-                $res = file_get_contents($bt_url, false, stream_context_create(array('http' => array('method' => "GET", 'header' => "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36\r\n"))));
+                $res = unsafe_fgc($bt_url, "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36\r\n");
 
                 preg_match($magnet_pattern, $res, $magnet_match);
                 if ($magnet_match[1]) {
@@ -68,7 +70,7 @@ function get_magnet($code, $hd = true)
         } else {
             // javbus页面找不到磁链, 只好去 $bt_url 找, 结果可能不精确
 
-            $res = file_get_contents($bt_url, false, stream_context_create(array('http' => array('method' => "GET", 'header' => "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36\r\n"))));
+            $res = unsafe_fgc($bt_url, "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36\r\n");
 
             preg_match($magnet_pattern, $res, $magnet_match);
             if ($magnet_match[1]) {
@@ -99,7 +101,7 @@ function get_info($code)
     $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
     $pic_pattern   = '/<a class="sample-box" href="(.+?)">/';
 
-    $res = file_get_contents($query_url);
+    $res = unsafe_fgc($query_url);
 
     preg_match($title_pattern, $res, $title_match);
     preg_match($date_pattern, $res, $date_match);
@@ -173,7 +175,7 @@ function get_img($picUrl, $dirName = 'tmp')
     $filename  = end($picUrlArr);
     if (!file_exists($path . $filename) || (filesize($path . $filename) === 0)) {
         touch($path . $filename);
-        file_put_contents($path . $filename, file_get_contents($picUrl));
+        file_put_contents($path . $filename, unsafe_fgc($picUrl));
     }
 
     return '//' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
@@ -192,7 +194,7 @@ function origin_query($code)
     $movie_pattern = '/<a class="movie-box" href="(.+)">/';  // 单页影片数
     $pages_pattern = '/<a href="\/search\/' . $code . '\/(\d+)">\d+/';  // 页数
 
-    $res = file_get_contents($search_url);
+    $res = unsafe_fgc($search_url);
 
     preg_match_all($movie_pattern, $res, $movie_match);
 
@@ -207,7 +209,7 @@ function origin_query($code)
         // 用户搜索结果不唯一, 可能需要翻页处理
         preg_match_all($pages_pattern, $res, $pages_match);
         //print_r($pages_match[1]);
-        $res = file_get_contents('https://www.javbus.com/uncensored/search/' . $code . '&type=1');
+        $res = unsafe_fgc('https://www.javbus.com/uncensored/search/' . $code . '&type=1');
         preg_match_all($pages_pattern, $res, $unpages_match);  // 无码页数
         preg_match_all($movie_pattern, $res, $unmovie_match);
         if (count($pages_match[1]) || count($unpages_match[1])) {
@@ -260,7 +262,7 @@ function randCode()
 
     $code_pattern = '/<a href="\.\/\?v=.+?" title="(\S+) {1}/';
 
-    $res = file_get_contents($best_rated);
+    $res = unsafe_fgc($best_rated);
 
     preg_match_all($code_pattern, $res, $code_match);
 
@@ -268,4 +270,23 @@ function randCode()
     $response = $code_match[1][rand(0, count($code_match[1]))];
     $response = empty($response) ? randCode() : $response;  // 防止返回空
     return $response;
+}
+
+/**
+ * file_get_contents without Secure Sockets Layer(SSL)
+ *
+ * @param string $url
+ * @param null   $header
+ * @return bool|string
+ */
+function unsafe_fgc($url, $header = null)
+{
+    return file_get_contents(
+        $url,
+        false,
+        stream_context_create([
+            'ssl'  => ['verify_peer' => false, 'verify_peer_name' => false],
+            'http' => ['header' => $header]
+        ])
+    );
 }
