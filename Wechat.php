@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 微信公众平台处理类
  */
@@ -35,7 +36,7 @@ class Wechat
         set_error_handler(array(&$this, 'errorHandler'));
         // 设置错误处理函数，将错误通过文本消息回复显示
 
-        $xml = (array)simplexml_load_string($GLOBALS['HTTP_RAW_POST_DATA'], 'SimpleXMLElement', LIBXML_NOCDATA);
+        $xml = (array)simplexml_load_string(file_get_contents('php://input'), 'SimpleXMLElement', LIBXML_NOCDATA);
 
         $this->request = array_change_key_case($xml, CASE_LOWER);
         // 将数组键名转换为小写，提高健壮性，减少因大小写不同而出现的问题
@@ -61,7 +62,7 @@ class Wechat
     {
         $signature = $_GET['signature'];
         $timestamp = $_GET['timestamp'];
-        $nonce = $_GET['nonce'];
+        $nonce     = $_GET['nonce'];
 
         $signatureArray = array($token, $timestamp, $nonce);
         sort($signatureArray);
@@ -255,21 +256,21 @@ class Wechat
         }
 
         $error_type = array(
-            E_ERROR => 'Error',
-            E_WARNING => 'Warning',
-            E_PARSE => 'Parse Error',
-            E_NOTICE => 'Notice',
-            E_CORE_ERROR => 'Core Error',
-            E_CORE_WARNING => 'Core Warning',
-            E_COMPILE_ERROR => 'Compile Error',
-            E_COMPILE_WARNING => 'Compile Warning',
-            E_USER_ERROR => 'User Error',
-            E_USER_WARNING => 'User Warning',
-            E_USER_NOTICE => 'User Notice',
-            E_STRICT => 'Strict',
+            E_ERROR             => 'Error',
+            E_WARNING           => 'Warning',
+            E_PARSE             => 'Parse Error',
+            E_NOTICE            => 'Notice',
+            E_CORE_ERROR        => 'Core Error',
+            E_CORE_WARNING      => 'Core Warning',
+            E_COMPILE_ERROR     => 'Compile Error',
+            E_COMPILE_WARNING   => 'Compile Warning',
+            E_USER_ERROR        => 'User Error',
+            E_USER_WARNING      => 'User Warning',
+            E_USER_NOTICE       => 'User Notice',
+            E_STRICT            => 'Strict',
             E_RECOVERABLE_ERROR => 'Recoverable Error',
-            E_DEPRECATED => 'Deprecated',
-            E_USER_DEPRECATED => 'User Deprecated',
+            E_DEPRECATED        => 'Deprecated',
+            E_USER_DEPRECATED   => 'User Deprecated',
         );
 
         $template = <<<ERR
@@ -302,9 +303,9 @@ abstract class WechatResponse
 
     public function __construct($toUserName, $fromUserName, $funcFlag)
     {
-        $this->toUserName = $toUserName;
+        $this->toUserName   = $toUserName;
         $this->fromUserName = $fromUserName;
-        $this->funcFlag = $funcFlag;
+        $this->funcFlag     = $funcFlag;
     }
 
     abstract public function __toString();
@@ -379,10 +380,10 @@ XML;
     public function __construct($toUserName, $fromUserName, $title, $description, $musicUrl, $hqMusicUrl, $funcFlag)
     {
         parent::__construct($toUserName, $fromUserName, $funcFlag);
-        $this->title = $title;
+        $this->title       = $title;
         $this->description = $description;
-        $this->musicUrl = $musicUrl;
-        $this->hqMusicUrl = $hqMusicUrl;
+        $this->musicUrl    = $musicUrl;
+        $this->hqMusicUrl  = $hqMusicUrl;
     }
 
     public function __toString()
@@ -465,10 +466,10 @@ XML;
 
     public function __construct($title, $description, $picUrl, $url)
     {
-        $this->title = $title;
+        $this->title       = $title;
         $this->description = $description;
-        $this->picUrl = $picUrl;
-        $this->url = $url;
+        $this->picUrl      = $picUrl;
+        $this->url         = $url;
     }
 
     public function __toString()

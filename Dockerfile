@@ -2,16 +2,11 @@ FROM ubuntu:16.04
 
 MAINTAINER Jim "https://github.com/hldh214"
 
-RUN apt-get update
-RUN apt-get install -y nginx php7.0-fpm php7.0-mbstring php7.0-xml supervisor
-
-RUN mkdir -p /var/log/supervisor
-RUN mkdir -p /run/php
-RUN mkdir -p /var/www/html/tmp
-RUN mkdir -p /var/www/html/preview
-
-RUN chown www-data:www-data /var/www/html/tmp
-RUN chown www-data:www-data /var/www/html/preview
+RUN apt-get update \
+    && apt-get install -y nginx php7.0-fpm php7.0-mbstring php7.0-xml supervisor \
+    && mkdir -p /var/log/supervisor /run/php /var/www/html/tmp /var/www/html/preview \
+    && chown www-data:www-data /var/www/html/tmp \
+    && chown www-data:www-data /var/www/html/preview
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY default /etc/nginx/sites-available/default
