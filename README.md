@@ -20,8 +20,9 @@
 
 **Docker**
 
+[![Docker Stars](https://img.shields.io/docker/stars/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
-
+[![Docker Automated buil](https://img.shields.io/docker/automated/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
 
 ``` sh
 $ docker run -d -p 8000:80 hldh214/gas
