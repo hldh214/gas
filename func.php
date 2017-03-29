@@ -6,6 +6,21 @@
  */
 
 /**
+ * get_base_url
+ *
+ * @return string
+ */
+function get_base_url()
+{
+    return sprintf(
+        "%s://%s/",
+        isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+        $_SERVER['SERVER_NAME']
+    );
+}
+
+
+/**
  * 传入正规拼写的番号, 返回查询到的磁链, 查不到则返回false
  *
  * @param string $code
@@ -158,7 +173,7 @@ function make_preview($picUrl, $code, $dirName = 'preview')
         file_put_contents($path . $filename, $result);
     }
 
-    return 'http://' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
+    return get_base_url() . "$dirName/$filename";
 }
 
 /**
@@ -178,7 +193,7 @@ function get_img($picUrl, $dirName = 'tmp')
         file_put_contents($path . $filename, unsafe_fgc($picUrl));
     }
 
-    return 'http://' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
+    return get_base_url() . "$dirName/$filename";
 }
 
 /**

@@ -15,7 +15,7 @@ class MyWeChat extends Wechat
      */
     protected function onSubscribe()
     {
-        $this->responseText('欢迎上车, <a href="/intro.html">怎样快速学会开车?</a>');
+        $this->responseText('欢迎上车, <a href="' . get_base_url() . 'intro.html">怎样快速学会开车?</a>');
     }
 
     /**
@@ -41,7 +41,7 @@ class MyWeChat extends Wechat
             // 只查询磁链(标清)
             $content = substr($content, 2);
             $this->responseText(get_magnet($content, false) ?: '请注意大写和连字符, 例如 ABS-130');
-        } elseif (substr($content, 0, 1) == '@'){
+        } elseif (substr($content, 0, 1) == '@') {
             $content = substr($content, 1);
             $this->responseText(get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130');
         } else {
@@ -53,6 +53,7 @@ class MyWeChat extends Wechat
 
     /**
      * 收到图片消息时触发
+     *
      * @return void
      */
     protected function onImage()
