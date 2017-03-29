@@ -129,7 +129,7 @@ function get_info($code)
         $response .= "\n" . '<a target="_blank" href="' . make_preview($pic_match[1], $code) . '">截图</a>';
     }
 
-    $magnet = get_magnet($code) ?: '找不到神秘代码';
+    $magnet   = get_magnet($code) ?: '找不到神秘代码';
     $response .= "\n" . $magnet;
 
     return $response;
@@ -158,7 +158,7 @@ function make_preview($picUrl, $code, $dirName = 'preview')
         file_put_contents($path . $filename, $result);
     }
 
-    return '//' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
+    return 'http://' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
 }
 
 /**
@@ -178,7 +178,7 @@ function get_img($picUrl, $dirName = 'tmp')
         file_put_contents($path . $filename, unsafe_fgc($picUrl));
     }
 
-    return '//' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
+    return 'http://' . $_SERVER['HTTP_HOST'] . "/$dirName/$filename";
 }
 
 /**
@@ -269,6 +269,7 @@ function randCode()
     //print_r($code_match);
     $response = $code_match[1][rand(0, count($code_match[1]))];
     $response = empty($response) ? randCode() : $response;  // 防止返回空
+
     return $response;
 }
 
