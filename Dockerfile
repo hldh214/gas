@@ -11,6 +11,7 @@ RUN apt-get update \
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY default /etc/nginx/sites-available/default
 COPY index.html /var/www/html/index.html
+COPY intro.html /var/www/html/intro.html
 COPY ajax.php /var/www/html/ajax.php
 COPY func.php /var/www/html/func.php
 COPY JLib.php /var/www/html/JLib.php
