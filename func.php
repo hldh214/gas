@@ -180,18 +180,20 @@ function make_preview($picUrl, $code, $dirName = 'preview')
  * 通过传入url下载该图片, 并返回下载到服务器后的url
  *
  * @param string $picUrl
+ * @param string $code
  * @param string $dirName
  * @return string
  */
 function get_img($picUrl, $code, $dirName = 'tmp')
 {
-    $path = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
-    if (!file_exists($path . $code) || (filesize($path . $code) === 0)) {
-        touch($path . $code);
-        file_put_contents($path . $code, unsafe_fgc($picUrl));
+    $filename = $code . '.jpg';
+    $path     = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
+    if (!file_exists($path . $filename) || (filesize($path . $filename) === 0)) {
+        touch($path . $filename);
+        file_put_contents($path . $filename, unsafe_fgc($picUrl));
     }
 
-    return get_base_url() . "{$dirName}/{$code}";
+    return get_base_url() . "{$dirName}/{$filename}";
 }
 
 /**
