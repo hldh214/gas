@@ -1,6 +1,6 @@
 <?php
 /**
- * Gas station V1.5.1
+ * Gas station V1.5.2
  *
  * TODO: rework
  */
@@ -133,11 +133,11 @@ function get_info($code)
         $date_match[1] = '未知';
     }
     $response = '车牌&车型: ' . $title_match[1]
-        . "\n" . '发车日期: ' . $date_match[1]
-        . "\n" . '司机: ' . $star;
+                . "\n" . '发车日期: ' . $date_match[1]
+                . "\n" . '司机: ' . $star;
 
 
-    $response .= "\n" . '<a target="_blank" href="' . get_img($cover_match[1]) . '">封面图</a>';
+    $response .= "\n" . '<a target="_blank" href="' . get_img($cover_match[1], $code) . '">封面图</a>';
 
 
     if ($pic_match[1]) {
@@ -173,7 +173,7 @@ function make_preview($picUrl, $code, $dirName = 'preview')
         file_put_contents($path . $filename, $result);
     }
 
-    return get_base_url() . "$dirName/$filename";
+    return get_base_url() . "{$dirName}/{$filename}";
 }
 
 /**
@@ -183,17 +183,15 @@ function make_preview($picUrl, $code, $dirName = 'preview')
  * @param string $dirName
  * @return string
  */
-function get_img($picUrl, $dirName = 'tmp')
+function get_img($picUrl, $code, $dirName = 'tmp')
 {
-    $path      = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
-    $picUrlArr = explode('/', $picUrl);
-    $filename  = end($picUrlArr);
-    if (!file_exists($path . $filename) || (filesize($path . $filename) === 0)) {
-        touch($path . $filename);
-        file_put_contents($path . $filename, unsafe_fgc($picUrl));
+    $path = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
+    if (!file_exists($path . $code) || (filesize($path . $code) === 0)) {
+        touch($path . $code);
+        file_put_contents($path . $code, unsafe_fgc($picUrl));
     }
 
-    return get_base_url() . "$dirName/$filename";
+    return get_base_url() . "{$dirName}/{$code}";
 }
 
 /**
