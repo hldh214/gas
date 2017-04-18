@@ -1,9 +1,9 @@
-FROM ubuntu:16.04
+FROM alpine:3.5
 
 MAINTAINER Jim "https://github.com/hldh214"
 
-RUN apt-get update \
-    && apt-get install -y nginx php7.0-fpm php7.0-mbstring php7.0-xml supervisor \
+RUN apk add --update bash nginx php7-fpm php7-mbstring php7-xml supervisor \
+    && rm -rf /var/cache/apk/* \
     && mkdir -p /var/log/supervisor /run/php /var/www/html/tmp /var/www/html/preview \
     && chown www-data:www-data /var/www/html/tmp \
     && chown www-data:www-data /var/www/html/preview
