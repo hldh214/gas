@@ -1,15 +1,15 @@
-FROM ubuntu:16.04
+FROM alpine:3.5
 
 MAINTAINER Jim "https://github.com/hldh214"
 
-RUN apt-get update \
-    && apt-get install -y nginx php7.0-fpm php7.0-mbstring php7.0-xml supervisor \
-    && mkdir -p /var/log/supervisor /run/php /var/www/html/tmp /var/www/html/preview \
-    && chown www-data:www-data /var/www/html/tmp \
-    && chown www-data:www-data /var/www/html/preview
+RUN apk add --update bash nginx php7-fpm php7-mbstring php7-xml php7-openssl supervisor \
+    && rm -rf /var/cache/apk/* \
+    && mkdir -p /run/nginx /var/www/html/tmp /var/www/html/preview \
+    && chown nobody:nobody /var/www/html/tmp \
+    && chown nobody:nobody /var/www/html/preview
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY default /etc/nginx/sites-available/default
+COPY supervisord.conf /etc/supervisord.conf
+COPY default /etc/nginx/conf.d/default.conf
 COPY index.html /var/www/html/index.html
 COPY intro.html /var/www/html/intro.html
 COPY ajax.php /var/www/html/ajax.php
