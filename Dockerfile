@@ -4,11 +4,11 @@ MAINTAINER Jim "https://github.com/hldh214"
 
 RUN apk add --update bash nginx php7-fpm php7-mbstring php7-xml supervisor \
     && rm -rf /var/cache/apk/* \
-    && mkdir -p /var/log/supervisor /run/php /var/www/html/tmp /var/www/html/preview \
-    && chown www-data:www-data /var/www/html/tmp \
-    && chown www-data:www-data /var/www/html/preview
+    && mkdir -p /run/nginx /var/www/html/tmp /var/www/html/preview \
+    && chown nginx:nginx /var/www/html/tmp \
+    && chown nginx:nginx /var/www/html/preview
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY supervisord.conf /etc/supervisord.conf
 COPY default /etc/nginx/sites-available/default
 COPY index.html /var/www/html/index.html
 COPY intro.html /var/www/html/intro.html
