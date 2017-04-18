@@ -8,6 +8,11 @@ server {
     server_name _;
     server_tokens off;
 
+    location ~ /(tmp|preview) {
+        autoindex on;
+        autoindex_localtime on;
+    }
+
     location / {
         try_files $uri $uri/ =404;
     }
