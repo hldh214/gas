@@ -9,7 +9,7 @@ RUN apk add --update bash nginx php7-fpm php7-mbstring php7-xml supervisor \
     && chown nginx:nginx /var/www/html/preview
 
 COPY supervisord.conf /etc/supervisord.conf
-COPY default /etc/nginx/sites-available/default
+COPY default /etc/nginx/conf.d/default.conf
 COPY index.html /var/www/html/index.html
 COPY intro.html /var/www/html/intro.html
 COPY ajax.php /var/www/html/ajax.php
