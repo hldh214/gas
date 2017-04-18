@@ -5,8 +5,8 @@ MAINTAINER Jim "https://github.com/hldh214"
 RUN apk add --update bash nginx php7-fpm php7-mbstring php7-xml php7-openssl supervisor \
     && rm -rf /var/cache/apk/* \
     && mkdir -p /run/nginx /var/www/html/tmp /var/www/html/preview \
-    && chown nginx:nginx /var/www/html/tmp \
-    && chown nginx:nginx /var/www/html/preview
+    && chown nobody:nobody /var/www/html/tmp \
+    && chown nobody:nobody /var/www/html/preview
 
 COPY supervisord.conf /etc/supervisord.conf
 COPY default /etc/nginx/conf.d/default.conf
