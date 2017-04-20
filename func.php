@@ -1,6 +1,6 @@
 <?php
 /**
- * Gas station V1.5.2
+ * Gas station V1.6
  *
  * TODO: rework
  */
@@ -29,6 +29,12 @@ function get_base_url()
  */
 function get_magnet($code, $hd = true)
 {
+    // v1.6 新增: 尝试转换番号成正规格式
+    // 首先转换成大写
+    $code = strtoupper($code);
+
+    // todo: 不是所有番号都有连字符(-)
+
     // 要求输入必须严格, 例ABS-130, 反之则可能导致结果不精确
     $query_url = 'http://www.javbus.com/' . $code;
     $bt_url    = 'https://www.torrentkitty.tv/search/' . $code;  // 搜索磁力链接url(备用)(不精确)

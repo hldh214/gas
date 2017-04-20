@@ -2,7 +2,7 @@ FROM alpine:3.5
 
 MAINTAINER Jim "https://github.com/hldh214"
 
-RUN apk add --update bash nginx php7-fpm php7-mbstring php7-xml php7-openssl supervisor \
+RUN apk add --update bash nginx php7-fpm php7-xml php7-openssl supervisor \
     && rm -rf /var/cache/apk/* \
     && mkdir -p /run/nginx /var/www/html/tmp /var/www/html/preview \
     && chown nobody:nobody /var/www/html/tmp \
