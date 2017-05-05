@@ -2,8 +2,6 @@
 
 **Gas** is a JAV magnet crawler, written in PHP.
 
-[Demo](https://gas.arukascloud.io/)
-
 ### Sources
 
 * [javbus](https://www.javbus.com/)
