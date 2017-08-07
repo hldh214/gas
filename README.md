@@ -1,4 +1,4 @@
-![screenshot](head.jpg)
+![screenshot](https://raw.githubusercontent.com/hldh214/gas/lagacy/head.jpg)
 
 **Gas** is a JAV magnet crawler, written in PHP.
 
