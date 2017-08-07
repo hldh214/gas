@@ -7,31 +7,8 @@
 * [javbus](https://www.javbus.com/)
 * [javlibrary](http://www.javlibrary.com/)
 * [torrentkitty](https://www.torrentkitty.tv/)
+* [avgle](https://avgle.com/)
 
-### Install
-
-**Source**
-
-1. Cloned it from github or download package as zip.
-2. Unzip code to your webserver.
-3. Go to //youhost.com/ and that's all <3.
-
-**Docker**
-
-[![Docker Stars](https://img.shields.io/docker/stars/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
-[![Docker Automated buil](https://img.shields.io/docker/automated/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
-
-``` sh
-$ docker run -d -p 8000:80 hldh214/gas
-```
-
-### Future features
-
-
-
-* more readable code.
-* more source.
 
 ### Contribution
 
