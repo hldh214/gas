@@ -29,10 +29,9 @@ class Gas implements ShouldQueue
 
     public function handle()
     {
-        $code = $this->config['code'];
-
         $promises = [
-            'javbus' => $this->javbus('5271884763', '0'),
+            'javbus' => $this->javbus($this->config['gid'], $this->config['uc']),
+//            'avgle' => $this->avgle($this->config['code']),
         ];
 
         $results = \GuzzleHttp\Promise\unwrap($promises);
@@ -42,7 +41,6 @@ class Gas implements ShouldQueue
             dump($this->$method($result));
         }
     }
-
 
     protected function javbus($gid, $uc)
     {
@@ -82,12 +80,12 @@ class Gas implements ShouldQueue
         }, $matches['magnet'], $matches['name'], $matches['hd'], $matches['size'], $matches['date']);
     }
 
-    protected function torrentkitty($code)
+    protected function avgle($code)
     {
-
+        return $this->opener()->getAsync("https://api.avgle.com/v1/jav/{$code}/0");
     }
 
-    protected function avgle($code)
+    protected function parse_avgle($response)
     {
 
     }

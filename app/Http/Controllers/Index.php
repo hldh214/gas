@@ -9,7 +9,7 @@ class Index extends Controller
     public function index()
     {
         dispatch(new Gas([
-            'code' => 'SMD-115'
+            'code' => 'PGD-949'
         ]));
     }
 }
