@@ -1,8 +1,7 @@
 <?php
 /**
- * Gas station V1.6
+ * Gas station
  *
- * TODO: rework
  */
 
 /**
