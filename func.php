@@ -142,11 +142,11 @@ function get_info($code)
                 . "\n" . '司机: ' . $star;
 
 
-    $response .= "\n" . '<a target="_blank" href="' . get_img($cover_match[1], $code) . '">封面图</a>';
+    $response .= "\n" . '<a href="' . $cover_match[1] . '">封面图</a>';
 
 
     if ($pic_match[1]) {
-        $response .= "\n" . '<a target="_blank" href="' . make_preview($pic_match[1], $code) . '">截图</a>';
+        $response .= "\n" . '<a href="' . make_preview($pic_match[1], $code) . '">截图</a>';
     }
 
     $magnet   = get_magnet($code) ?: '找不到神秘代码';
