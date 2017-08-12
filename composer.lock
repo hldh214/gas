@@ -664,12 +664,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "81fde496ff95dd5c66f8fb1c0afa4dc86dbb2663"
+                "reference": "15c81645788be437fd7079e50e97e90b7972fd40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/laravel/framework/81fde496ff95dd5c66f8fb1c0afa4dc86dbb2663.zip",
-                "reference": "81fde496ff95dd5c66f8fb1c0afa4dc86dbb2663",
+                "url": "https://files.phpcomposer.com/files/laravel/framework/15c81645788be437fd7079e50e97e90b7972fd40.zip",
+                "reference": "15c81645788be437fd7079e50e97e90b7972fd40",
                 "shasum": ""
             },
             "require": {
@@ -788,7 +788,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2017-08-08T17:20:45+00:00"
+            "time": "2017-08-11T17:01:06+00:00"
         },
         {
             "name": "laravel/tinker",
