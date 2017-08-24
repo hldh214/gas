@@ -117,7 +117,6 @@ function get_info($code)
 
     $title_pattern = '/<h3>(.+)<\/h3>/';
     $date_pattern  = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
-    $star_pattern  = '/<div class="star-name">.+title="(.+)"/';
     $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
     $pic_pattern   = '/<a class="sample-box" href="(.+?)">/';
 
@@ -125,21 +124,15 @@ function get_info($code)
 
     preg_match($title_pattern, $res, $title_match);
     preg_match($date_pattern, $res, $date_match);
-    preg_match_all($star_pattern, $res, $star_match);
     preg_match($cover_pattern, $res, $cover_match);
     preg_match_all($pic_pattern, $res, $pic_match);
 
-    if ($star_match[1]) {
-        $star = implode('; ', $star_match[1]);
-    } else {
-        $star = '暂无司机数据';
-    }
+
     if ('0000-00-00' == $date_match[1]) {
         $date_match[1] = '未知';
     }
-    $response = '车牌&车型: ' . $title_match[1]
-                . "\n" . '发车日期: ' . $date_match[1]
-                . "\n" . '司机: ' . $star;
+    $response = '车牌&车型&司机: ' . $title_match[1]
+                . "\n" . '发车日期: ' . $date_match[1];
 
 
     $response .= "\n" . '<a href="' . $cover_match[1] . '">封面图</a>';
@@ -181,25 +174,6 @@ function make_preview($picUrl, $code, $dirName = 'preview')
     return get_base_url() . "{$dirName}/{$filename}";
 }
 
-/**
- * 通过传入url下载该图片, 并返回下载到服务器后的url
- *
- * @param string $picUrl
- * @param string $code
- * @param string $dirName
- * @return string
- */
-function get_img($picUrl, $code, $dirName = 'tmp')
-{
-    $filename = $code . '.jpg';
-    $path     = $_SERVER['DOCUMENT_ROOT'] . "/$dirName/";
-    if (!file_exists($path . $filename) || (filesize($path . $filename) === 0)) {
-        touch($path . $filename);
-        file_put_contents($path . $filename, unsafe_fgc($picUrl));
-    }
-
-    return get_base_url() . "{$dirName}/{$filename}";
-}
 
 /**
  * 传入用户的原始输入, 返回查询到的信息(带磁链), 查不到则返回jav_lib高评价里的随机番号
