@@ -6,7 +6,6 @@
 
 * [javbus](https://www.javbus.com/)
 * [javlibrary](http://www.javlibrary.com/)
-* [torrentkitty](https://www.torrentkitty.tv/)
 
 ### Install
 
