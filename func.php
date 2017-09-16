@@ -18,7 +18,6 @@ function get_base_url()
     );
 }
 
-
 /**
  * 传入正规拼写的番号, 返回查询到的磁链, 查不到则返回false
  * todo: rename param: $hd (prevent boolean param)
@@ -82,7 +81,7 @@ function get_magnet($code, $hd = true)
  * 传入搜索结果唯一的番号, 需要正规拼写, 返回查询到的信息(带磁链)
  *
  * @param string $code
- * @return string
+ * @return string | boolean
  */
 function get_info($code)
 {
@@ -100,6 +99,9 @@ function get_info($code)
     preg_match($cover_pattern, $res, $cover_match);
     preg_match_all($pic_pattern, $res, $pic_match);
 
+    if (!isset($title_match[1])) {
+        return false;
+    }
 
     if ('0000-00-00' == $date_match[1]) {
         $date_match[1] = '未知';
@@ -147,7 +149,6 @@ function make_preview($picUrl, $code, $dirName = 'preview')
     return get_base_url() . "{$dirName}/{$filename}";
 }
 
-
 /**
  * 传入用户的原始输入, 返回查询到的信息(带磁链), 查不到则返回jav_lib高评价里的随机番号
  *
@@ -188,9 +189,7 @@ function origin_query($code)
             // 只有一页或者没找到
             //print_r(count($movie_match[1]));
             if (count($movie_match[1]) == 0) {
-                $randcode = randCode();
-
-                return '没有此车牌, 试试' . $randcode;
+                return '没有此车牌, 获取随机车牌请发送井号 (#)';
             } else {
                 // 此时两种情况, 一种是搜SW-220, 结果有DKSW-220 和 SW-220, 另一种则是寻常的模糊搜索
                 if (in_array('https://www.javbus.com/' . $code, $movie_match[1]) || in_array('https://www.javbus.com/' . $code, $unmovie_match[1])) {

@@ -42,8 +42,16 @@ class MyWeChat extends Wechat
             $content = substr($content, 2);
             $this->responseText(get_magnet($content, false) ?: '请注意大写和连字符, 例如 ABS-130');
         } elseif (substr($content, 0, 1) == '@') {
+            // 只查询磁链(高清, 如果有)
             $content = substr($content, 1);
             $this->responseText(get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130');
+        } elseif ($content == '#') {
+            // 获取随机番号
+            $res = get_info(randCode());
+            while (!$res) {
+                $res = get_info(randCode());
+            }
+            $this->responseText($res);
         } else {
             // 查询全部信息
             $this->responseText(origin_query($content));
