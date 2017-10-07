@@ -8,7 +8,7 @@
 - [Install](#install)
 - [Future features](#future-features)
 - [Contribution](#contribution)
-  * [License](#license)
+- [License](#license)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -50,6 +50,6 @@ Feel free to contribute.
 * Can/want/like develop? Create pull request and I will check it in nearest time! 
 
 
-#### License
+### License
 
 Gas is open-source software licensed under the MIT License. See the LICENSE.txt file for more information.
