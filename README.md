@@ -2,6 +2,16 @@
 
 **Gas** is a JAV magnet crawler, written in PHP.
 
+## Table of Contents
+
+- [Sources](#sources)
+- [Install](#install)
+- [Future features](#future-features)
+- [Contribution](#contribution)
+  * [License](#license)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ### Sources
 
 * [javbus](https://www.javbus.com/)
