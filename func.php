@@ -110,7 +110,9 @@ function get_info($code)
                 . "\n" . '发车日期: ' . $date_match[1];
 
 
-    $response .= "\n" . '<a href="' . $cover_match[1] . '">封面图</a>';
+    $response .= "\n" . '<a href="'
+                 . str_replace('https://pics.javbus.com', 'http://pics.pwpwpwpwpwpwpwpwpwpw.pw', $cover_match[1])
+                 . '">封面图</a>';
 
 
     if ($pic_match[1]) {
