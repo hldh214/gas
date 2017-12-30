@@ -5,8 +5,8 @@
  */
 
 const SENSITIVE_WORDS = [
-    'search' => ['素人娘'],
-    'replace' => ['素x人x娘']
+    'search' => ['素人娘', '盗撮'],
+    'replace' => ['素x人x娘', '盗x撮']
 ];
 
 /**
@@ -164,10 +164,10 @@ function make_preview($picUrl, $code, $dirName = 'preview')
  */
 function origin_query($code)
 {
-    $search_url = 'https://www.javbus.com/search/' . $code;  // 按番号搜索
+    $search_url = 'https://www.javbus.com/search/' . urlencode($code);  // 按番号搜索
 
-    $movie_pattern = '/<a class="movie-box" href="(.+)">/';  // 单页影片数
-    $pages_pattern = '/<a href="\/search\/' . $code . '\/(\d+)">\d+/';  // 页数
+    $movie_pattern = '/class="movie-box" href="(.+)">/';  // 单页影片数
+    $pages_pattern = '#href="/search/\S+/(\d+)">\d+#';  // 页数
 
     $res = unsafe_fgc($search_url);
 
