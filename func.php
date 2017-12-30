@@ -4,6 +4,11 @@
  *
  */
 
+const SENSITIVE_WORDS = [
+    'search' => ['素人娘'],
+    'replace' => ['素x人x娘']
+];
+
 /**
  * get_base_url
  *
@@ -122,7 +127,7 @@ function get_info($code)
     $magnet   = get_magnet($code) ?: '找不到神秘代码';
     $response .= "\n" . $magnet;
 
-    return $response;
+    return str_replace(SENSITIVE_WORDS['search'], SENSITIVE_WORDS['replace'], $response);
 }
 
 /**
