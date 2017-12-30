@@ -111,7 +111,7 @@ function get_info($code)
 
 
     $response .= "\n" . '<a href="'
-                 . str_replace('https://pics.javbus.com', 'http://pics.pwpwpwpwpwpwpwpwpwpw.pw', $cover_match[1])
+                 . str_replace('javbus.com', 'javcdn.pw', $cover_match[1])
                  . '">封面图</a>';
 
 
