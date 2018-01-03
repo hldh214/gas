@@ -5,8 +5,8 @@
  */
 
 const SENSITIVE_WORDS = [
-    'search' => ['素人娘', '盗撮'],
-    'replace' => ['素x人x娘', '盗x撮']
+    'search' => ['素人娘', '盗撮', '肉奴隷', '発射'],
+    'replace' => ['素x人x娘', '盗x撮', '肉x奴x隷', '発x射']
 ];
 
 /**
