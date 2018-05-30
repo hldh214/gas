@@ -1,5 +1,3 @@
-![screenshot](head.jpg)
-
 **Gas** is a JAV magnet crawler, written in PHP.
 
 ## Table of Contents
