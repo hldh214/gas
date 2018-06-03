@@ -5,7 +5,7 @@
  */
 
 const SENSITIVE_WORDS = [
-    'search' => ['素人娘', '盗撮', '肉奴隷', '発射', '大乱交', '2穴中出'],
+    'search'  => ['素人娘', '盗撮', '肉奴隷', '発射', '大乱交', '2穴中出'],
     'replace' => ['素x人x娘', '盗x撮', '肉x奴x隷', '発x射', '大x乱x交', '2x穴x中x出']
 ];
 
@@ -263,4 +263,20 @@ function unsafe_fgc($url, $header = null)
             'http' => ['header' => $header]
         ])
     );
+}
+
+function unsafe_curl($url, $header = null)
+{
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_SSL_VERIFYPEER   => false,
+        CURLOPT_SSL_VERIFYHOST   => false,
+        CURLOPT_SSL_VERIFYSTATUS => false,
+        CURLOPT_RETURNTRANSFER   => true
+    ]);
+    if ($header) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, explode("\r\n", $header));
+    }
+
+    return curl_exec($ch);
 }
