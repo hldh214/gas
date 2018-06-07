@@ -59,7 +59,10 @@ class Crawl extends Command
         }
 
         foreach ($codes as $code) {
-            $info[] = $jlib->get_info($code);
+            $res = $jlib->get_info($code);
+            if ($res) {
+                $info[] = $res;
+            }
         }
 
         cache()->forever('best_rated', $info);

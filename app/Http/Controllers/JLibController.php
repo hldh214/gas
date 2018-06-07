@@ -280,6 +280,12 @@ class JLibController extends Controller
         return $response;
     }
 
+    private function rand_code_from_cache()
+    {
+        $a = (array) cache()->get('best_rated');
+        return $a[mt_rand(0, count($a) - 1)];
+    }
+
     /**
      * file_get_contents without Secure Sockets Layer(SSL)
      *
