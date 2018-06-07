@@ -67,7 +67,7 @@ class JLibController extends Controller
     private function get_magnet($code, $hd = true)
     {
         // 要求输入必须严格, 例ABS-130, 反之则可能导致结果不精确
-        $query_url = 'http://www.javbus.com/' . $code;
+        $query_url = env('JAVBUS_BASE_URL') . $code;
 
         $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
         $gid_pattern   = '/gid *= *(\d+)/';
@@ -83,10 +83,11 @@ class JLibController extends Controller
         preg_match($uc_pattern, $res, $uc_match);
         preg_match($cover_pattern, $res, $cover_match);
 
-        $get_magnet_url = 'https://www.javbus.com/ajax/uncledatoolsbyajax.php?gid=' . $gid_match[1] . '&lang=zh&img=' . $cover_match[1] . '&uc=' . $uc_match[1] . '&floor=' . rand(1, 1000);
+        $get_magnet_url = env('JAVBUS_BASE_URL') . '/ajax/uncledatoolsbyajax.php?gid=' . $gid_match[1] . '&lang=zh&img=' .
+                          $cover_match[1] . '&uc=' . $uc_match[1] . '&floor=' . rand(1, 1000);
 
         // 伪造ajax查询所必要的headers
-        $res = $this->unsafe_fgc($get_magnet_url, "Referer: https://www.javbus.com\r\nCookie: existmag=mag\r\n");
+        $res = $this->unsafe_fgc($get_magnet_url, "Referer: " . env('JAVBUS_BASE_URL') . "\r\nCookie: existmag=mag\r\n");
 
         preg_match_all($hd_mag_pattern, $res, $hd_mag_match);
         preg_match_all($normal_mag_pattern, $res, $normal_mag_match);
@@ -121,9 +122,9 @@ class JLibController extends Controller
      * @param string $code
      * @return string | boolean
      */
-    private function get_info($code)
+    public function get_info($code)
     {
-        $query_url = 'http://www.javbus.com/' . $code;
+        $query_url = env('JAVBUS_BASE_URL') . $code;
 
         $title_pattern = '/<h3>(.+)<\/h3>/';
         $date_pattern  = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
@@ -153,9 +154,9 @@ class JLibController extends Controller
                      . '">封面图</a>';
 
 
-        if ($pic_match[1]) {
-            $response .= "\n" . '<a href="' . $this->make_preview($pic_match[1], $code) . '">截图</a>';
-        }
+//        if ($pic_match[1]) {
+//            $response .= "\n" . '<a href="' . $this->make_preview($pic_match[1], $code) . '">截图</a>';
+//        }
 
         $magnet   = $this->get_magnet($code) ?: '找不到神秘代码';
         $response .= "\n" . $magnet;
@@ -197,7 +198,7 @@ class JLibController extends Controller
      */
     private function origin_query($code)
     {
-        $search_url = 'https://www.javbus.com/search/' . urlencode($code);  // 按番号搜索
+        $search_url = env('JAVBUS_BASE_URL') . '/search/' . urlencode($code);  // 按番号搜索
 
         $movie_pattern = '/class="movie-box" href="(.+)">/';  // 单页影片数
         $pages_pattern = '#href="/search/\S+/(\d+)">\d+#';  // 页数
@@ -217,7 +218,7 @@ class JLibController extends Controller
             // 用户搜索结果不唯一, 可能需要翻页处理
             preg_match_all($pages_pattern, $res, $pages_match);
             //print_r($pages_match[1]);
-            $res = $this->unsafe_fgc('https://www.javbus.com/uncensored/search/' . $code . '&type=1');
+            $res = $this->unsafe_fgc(env('JAVBUS_BASE_URL') . '/uncensored/search/' . $code . '&type=1');
             preg_match_all($pages_pattern, $res, $unpages_match);  // 无码页数
             preg_match_all($movie_pattern, $res, $unmovie_match);
             if (count($pages_match[1]) || count($unpages_match[1])) {
@@ -232,7 +233,7 @@ class JLibController extends Controller
                     return '没有此车牌, 获取随机车牌请发送井号 (#)';
                 } else {
                     // 此时两种情况, 一种是搜SW-220, 结果有DKSW-220 和 SW-220, 另一种则是寻常的模糊搜索
-                    if (in_array('https://www.javbus.com/' . $code, $movie_match[1]) || in_array('https://www.javbus.com/' . $code, $unmovie_match[1])) {
+                    if (in_array(env('JAVBUS_BASE_URL') . $code, $movie_match[1]) || in_array(env('JAVBUS_BASE_URL') . $code, $unmovie_match[1])) {
                         // 此时便是搜SW-220, 结果有DKSW-220 和 SW-220 的情况, 需要返回SW-220的信息
                         $response = $this->get_info($code);
                     } else {
