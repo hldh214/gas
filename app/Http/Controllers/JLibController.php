@@ -28,7 +28,7 @@ class JLibController extends Controller
                     return $this->get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130';
                 } elseif ($content == '#') {
                     // 获取随机番号
-                    return $this->get_info($this->randCode());
+                    return $this->rand_code_from_cache();
                 } else {
                     // 查询全部信息
                     return $this->origin_query($content);
