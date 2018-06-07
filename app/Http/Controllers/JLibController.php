@@ -293,7 +293,7 @@ class JLibController extends Controller
             false,
             stream_context_create([
                 'ssl'  => ['verify_peer' => false, 'verify_peer_name' => false],
-                'http' => ['header' => $header]
+                'http' => ['header' => $header, 'ignore_errors' => true]
             ])
         );
     }
