@@ -45,7 +45,10 @@ class Crawl extends Command
 
         $jlib         = app()->make('App\Http\Controllers\JLibController');
         $code_pattern = '/<a href="\.\/\?v=.+?" title="(\S+) {1}/';
-        $client       = new Client(['base_uri' => 'http://www.javlibrary.com/']);
+        $client       = new Client([
+            'base_uri' => 'http://www.javlibrary.com/',
+            'verify'   => false
+        ]);
 
         for ($page = 1; $page < 10; $page++) {
             $promises[] = $client->getAsync('/tw/vl_bestrated.php?list&mode=&page=' . $page);
