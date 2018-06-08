@@ -52,7 +52,7 @@ class JLibController extends Controller
      * @param int    $hd
      * @return mixed
      */
-    private function get_magnet($code, $hd = self::QUALITY_HD)
+    public function get_magnet($code, $hd = self::QUALITY_HD)
     {
         // 要求输入必须严格, 例ABS-130, 反之则可能导致结果不精确
         $query_url = config('jlib.javbus_base_url') . $code;
@@ -62,8 +62,8 @@ class JLibController extends Controller
         $uc_pattern    = '/uc *= *(\d+);/';
         // 以上三个正则用于匹配ajax查询jab_bus上的磁链所需要的参数
 
-        $hd_mag_pattern     = '/href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+\s*<a class="btn btn-mini-new btn-primary disabled"/';  // 用于匹配javbus高清搜索结果的正则
-        $normal_mag_pattern = '/window\.open\(\'(magnet:\?xt=urn:btih:\w{40}).*?_self\'\)/';  // 用于匹配javbus标清搜索结果的正则
+        $hd_mag_pattern     = '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+?<a#';  // 用于匹配javbus高清搜索结果的正则
+        $normal_mag_pattern = '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*\S+\s*</a#';  // 用于匹配javbus标清搜索结果的正则
 
         $res = $this->unsafe_fgc($query_url);
 
@@ -90,16 +90,17 @@ class JLibController extends Controller
             }
 
             return false;
-        } else if ($hd == self::QUALITY_SD) {
+        }
+        if ($hd == self::QUALITY_SD) {
             // 不需要高清
             if ($normal_mag_match[1]) {
                 return $normal_mag_match[1][0];
             }
 
             return false;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
