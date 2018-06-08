@@ -96,6 +96,9 @@ class JLibController extends Controller
             if ($normal_mag_match[1]) {
                 return $normal_mag_match[1][0];
             }
+            if ($hd_mag_match[1]) {
+                return $hd_mag_match[1][0];
+            }
 
             return false;
         }
