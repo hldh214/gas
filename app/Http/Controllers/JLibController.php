@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use EasyWeChat\Kernel\Messages\Message;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 
@@ -28,31 +29,32 @@ class JLibController extends Controller
     {
         $app = app('wechat.official_account');
         $app->server->push(function ($message) {
-            if ($message['MsgType'] == 'text') {
-                $content = $message['Content'];
-                if (substr($content, 0, 2) == '@@') {
-                    // 只查询磁链(标清)
-                    $content = substr($content, 2);
+            $content = $message['Content'];
+            if (substr($content, 0, 2) == '@@') {
+                // 只查询磁链(标清)
+                $content = substr($content, 2);
 
-                    return $this->get_magnet($content, self::QUALITY_SD) ?: '请注意大写和连字符, 例如 ABS-130';
-                } elseif (substr($content, 0, 1) == '@') {
-                    // 只查询磁链(高清, 如果有)
-                    $content = substr($content, 1);
+                return $this->get_magnet($content, self::QUALITY_SD) ?: '请注意大写和连字符, 例如 ABS-130';
+            } elseif (substr($content, 0, 1) == '@') {
+                // 只查询磁链(高清, 如果有)
+                $content = substr($content, 1);
 
-                    return $this->get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130';
-                } elseif ($content == '#') {
-                    // 获取随机番号
-                    return $this->rand_code_from_cache();
-                } else {
-                    // 查询全部信息
-                    return $this->origin_query($content);
-                }
+                return $this->get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130';
+            } elseif ($content == '#') {
+                // 获取随机番号
+                return $this->rand_code_from_cache();
+            } else {
+                // 查询全部信息
+                return $this->origin_query($content);
             }
-
-            return false;
-        });
+        }, Message::TEXT);
 
         return $app->server->serve();
+    }
+
+    public function get_info_by_image()
+    {
+
     }
 
     /**
@@ -247,7 +249,7 @@ class JLibController extends Controller
      *
      * @return string
      */
-    private function rand_code_from_cache()
+    public function rand_code_from_cache()
     {
         $a = (array)cache()->get('best_rated');
 
