@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use EasyWeChat\Kernel\Messages\Message;
-use function foo\func;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 
