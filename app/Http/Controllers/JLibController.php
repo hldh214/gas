@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use EasyWeChat\Kernel\Messages\Message;
+use function foo\func;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 
@@ -49,10 +50,14 @@ class JLibController extends Controller
             }
         }, Message::TEXT);
 
+        $app->server->push(function ($message) {
+            return $this->get_info_by_image($message['PicUrl']);
+        }, Message::IMAGE);
+
         return $app->server->serve();
     }
 
-    public function get_info_by_image()
+    public function get_info_by_image($image_url)
     {
 
     }
