@@ -11,4 +11,5 @@
 
 return [
     'javbus_base_url' => env('JAVBUS_BASE_URL', 'https://www.javbus.com/'),
+    'timeout'         => env('TIMEOUT', 5)
 ];

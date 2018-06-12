@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use EasyWeChat\Kernel\Messages\Message;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise;
 
 class JLibController extends Controller
@@ -21,6 +22,7 @@ class JLibController extends Controller
         $this->opener = new Client([
             'base_uri'    => config('jlib.javbus_base_url'),
             'http_errors' => false,
+            'timeout'     => config('jlib.timeout'),
             'verify'      => false
         ]);
     }
@@ -45,7 +47,7 @@ class JLibController extends Controller
                 return $this->rand_code_from_cache();
             } else {
                 // 查询全部信息
-                return $this->origin_query($content);
+                return $this->origin_query($content) ?: '服务器开小差了, 请过一会再来玩';
             }
         }, Message::TEXT);
 
@@ -81,22 +83,30 @@ class JLibController extends Controller
             $uc_pattern    = '/uc *= *(\d+);/';
             // 以上三个正则用于匹配 ajax 查询 javbus 上的磁链所需要的参数
 
-            $res = $this->opener->get('/' . $code)->getBody()->getContents();
+            try {
+                $res = $this->opener->get('/' . $code)->getBody()->getContents();
+            } catch (ConnectException $exception) {
+                return false;
+            }
 
             preg_match($gid_pattern, $res, $gid_match);
             preg_match($uc_pattern, $res, $uc_match);
             preg_match($cover_pattern, $res, $cover_match);
         }
 
-        // 伪造ajax查询所必要的headers
-        $res = $this->opener->get(
-            '/ajax/uncledatoolsbyajax.php?gid=' . $gid_match[1] . '&img=' .
-            $cover_match[1] . '&uc=' . $uc_match[1], [
-                'headers' => [
-                    'Referer' => config('jlib.javbus_base_url')
+        try {
+            $res = $this->opener->get(
+                '/ajax/uncledatoolsbyajax.php?gid=' . $gid_match[1] . '&img=' .
+                $cover_match[1] . '&uc=' . $uc_match[1], [
+                    'headers' => [
+                        'Referer' => config('jlib.javbus_base_url')
+                    ]
                 ]
-            ]
-        )->getBody()->getContents();
+            )->getBody()->getContents();
+        } catch (ConnectException $exception) {
+            return false;
+        }
+
 
         $hd_mag_pattern     = '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+?<a#';  // 用于匹配javbus高清搜索结果的正则
         $normal_mag_pattern = '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*\S+\s*</a#';  // 用于匹配javbus标清搜索结果的正则
@@ -144,7 +154,12 @@ class JLibController extends Controller
         $gid_pattern   = '/gid *= *(\d+)/';
         $uc_pattern    = '/uc *= *(\d+);/';
 
-        $res = $this->opener->get('/' . $code)->getBody()->getContents();
+        try {
+            $res = $this->opener->get('/' . $code)->getBody()->getContents();
+        } catch (ConnectException $exception) {
+            return false;
+        }
+
 
         preg_match($title_pattern, $res, $title_match);
         preg_match($date_pattern, $res, $date_match);
@@ -192,7 +207,12 @@ class JLibController extends Controller
             $this->opener->getAsync('/uncensored/search/' . urlencode($code))
         ];
 
-        $results        = Promise\unwrap($promises);
+        try {
+            $results = Promise\unwrap($promises);
+        } catch (ConnectException $exception) {
+            return false;
+        }
+
         $res            = $results[0]->getBody()->getContents();
         $uncensored_res = $results[1]->getBody()->getContents();
 
