@@ -53,7 +53,7 @@ class JLibController extends Controller
         }, Message::TEXT);
 
         $app->server->push(function ($message) {
-            return $this->get_info_by_image($message['PicUrl']);
+            return $this->get_info_by_image($message['PicUrl']) ?: '搜索结果为空, 请保证图中人脸清晰可见';
         }, Message::IMAGE);
 
         return $app->server->serve();
@@ -87,7 +87,13 @@ class JLibController extends Controller
             '#<a class="single-line" href="\S+?">\s(.+?)<#';
         preg_match_all($code_pattern, $res, $code_match);
 
-        return count($code_match[1]) ? implode("\n", $code_match[1]) : false;
+        return count($code_match[1])
+            ? str_replace(
+                self::SENSITIVE_WORDS['search'],
+                self::SENSITIVE_WORDS['replace'],
+                implode("\n", $code_match[1])
+            )
+            : false;
     }
 
     /**
