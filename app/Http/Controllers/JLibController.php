@@ -90,7 +90,7 @@ class JLibController extends Controller
 
         if ($code_match) {
             $code_only = array_filter(array_map(function ($each) {
-                preg_match('#[a-zA-Z]+-\d+#', $each, $code_match);
+                preg_match('#[a-zA-Z]+-\d{3}#', $each, $code_match);
 
                 if ($code_match) {
                     return $code_match[0];
