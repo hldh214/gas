@@ -84,7 +84,7 @@ class JLibController extends Controller
         }
 
         $parse_html_code_pattern = /** @lang RegExp */
-            '#<a class="single-line" href="(\S+?)">#';
+            '#<a class="single-line" href="(\S+?)".*?>#';
 
         preg_match_all($parse_html_code_pattern, $res, $code_match);
 
