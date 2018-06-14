@@ -88,19 +88,22 @@ class JLibController extends Controller
 
         preg_match_all($parse_html_code_pattern, $res, $code_match);
         $ascii_only = preg_replace('/[[:^print:]]/', '', $code_match[1]);
-        $code_only = array_filter(array_map(function ($each) {
-            $exploded = explode(' ', $each);
-            $code     = array_values(preg_grep('#^[a-zA-Z]+-\d+$#', array_filter($exploded)));
+        $code_only  = array_filter(array_map(function ($each) {
+            $percentage = explode(' ', $each);
+            preg_match('#[a-zA-Z]+-\d+#', $each, $code_match);
 
-            if ($code) {
-                return $exploded[0] . ' ' . $code[0];
+            if ($code_match) {
+                return $percentage[0] . ' ' . $code_match[0];
             }
 
             return false;
         }, $ascii_only));
 
-        return count($code_match[1])
-            ? implode("\n", $code_only)
+        return count($code_only)
+            ? implode("\n", array_intersect_key(
+                $code_only,
+                array_unique(array_map("StrToLower", $code_only))
+            ))
             : false;
     }
 
