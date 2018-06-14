@@ -99,10 +99,10 @@ class JLibController extends Controller
                 return false;
             }, $code_match[1]));
 
-            return implode("\n", array_intersect_key(
-                $code_only,
-                array_unique(array_map("StrToLower", $code_only))
-            ));
+            return "你是不是要找:\n" . implode("\n", array_intersect_key(
+                    $code_only,
+                    array_unique(array_map("StrToLower", $code_only))
+                ));
         }
 
         return false;
