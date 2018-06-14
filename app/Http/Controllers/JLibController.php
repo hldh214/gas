@@ -84,27 +84,28 @@ class JLibController extends Controller
         }
 
         $parse_html_code_pattern = /** @lang RegExp */
-            '#<a class="single-line" href="\S+?">\s*(.+?)<#';
+            '#<a class="single-line" href="(\S+?)">#';
 
         preg_match_all($parse_html_code_pattern, $res, $code_match);
-        $ascii_only = preg_replace('/[[:^print:]]/', '', $code_match[1]);
-        $code_only  = array_filter(array_map(function ($each) {
-            $percentage = explode(' ', $each);
-            preg_match('#[a-zA-Z]+-\d+#', $each, $code_match);
 
-            if ($code_match) {
-                return $percentage[0] . ' ' . $code_match[0];
-            }
+        if ($code_match) {
+            $code_only = array_filter(array_map(function ($each) {
+                preg_match('#[a-zA-Z]+-\d+#', $each, $code_match);
 
-            return false;
-        }, $ascii_only));
+                if ($code_match) {
+                    return $code_match[0];
+                }
 
-        return count($code_only)
-            ? implode("\n", array_intersect_key(
+                return false;
+            }, $code_match[1]));
+
+            return implode("\n", array_intersect_key(
                 $code_only,
                 array_unique(array_map("StrToLower", $code_only))
-            ))
-            : false;
+            ));
+        }
+
+        return false;
     }
 
     /**
