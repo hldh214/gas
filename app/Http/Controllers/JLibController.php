@@ -60,12 +60,34 @@ class JLibController extends Controller
     }
 
     /**
+     * 图片搜索 https://avgle.io/
+     *
      * @param $image_url string
-     * todo
+     * @return bool|string
      */
     public function get_info_by_image($image_url)
     {
+        try {
+            $res = $this->opener->post(
+                'https://avgle.io/image', [
+                    'multipart' => [
+                        [
+                            'name'     => 'data',
+                            'filename' => 'data',
+                            'contents' => $this->opener->get($image_url)->getBody()
+                        ]
+                    ]
+                ]
+            )->getBody()->getContents();
+        } catch (ConnectException $exception) {
+            return false;
+        }
 
+        $code_pattern = /** @lang RegExp */
+            '#<a class="single-line" href="\S+?">\s(.+?)<#';
+        preg_match_all($code_pattern, $res, $code_match);
+
+        return count($code_match[1]) ? implode("\n", $code_match[1]) : false;
     }
 
     /**
