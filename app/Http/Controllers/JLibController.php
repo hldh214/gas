@@ -27,6 +27,7 @@ class JLibController extends Controller
         ]);
     }
 
+    // todo rand_code_from_cache 添加分类 #1 #2 etc...
     public function index()
     {
         $app = app('wechat.official_account');
@@ -58,6 +59,10 @@ class JLibController extends Controller
         return $app->server->serve();
     }
 
+    /**
+     * @param $image_url string
+     * todo
+     */
     public function get_info_by_image($image_url)
     {
 
@@ -107,9 +112,10 @@ class JLibController extends Controller
             return false;
         }
 
-
-        $hd_mag_pattern     = '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+?<a#';  // 用于匹配javbus高清搜索结果的正则
-        $normal_mag_pattern = '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*\S+\s*</a#';  // 用于匹配javbus标清搜索结果的正则
+        $hd_mag_pattern     = /** @lang RegExp */
+            '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+?<a#';
+        $normal_mag_pattern = /** @lang RegExp */
+            '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*\S+\s*</a#';
 
         preg_match_all($hd_mag_pattern, $res, $hd_mag_match);
         preg_match_all($normal_mag_pattern, $res, $normal_mag_match);
