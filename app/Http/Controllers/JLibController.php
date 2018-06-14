@@ -80,7 +80,7 @@ class JLibController extends Controller
                 ]
             )->getBody()->getContents();
         } catch (ConnectException $exception) {
-            return false;
+            return '服务器开小差了, 请过一会再来玩';
         }
 
         $parse_html_code_pattern = /** @lang RegExp */
