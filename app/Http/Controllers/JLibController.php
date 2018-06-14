@@ -83,16 +83,25 @@ class JLibController extends Controller
             return false;
         }
 
-        $code_pattern = /** @lang RegExp */
-            '#<a class="single-line" href="\S+?">\s(.+?)<#';
-        preg_match_all($code_pattern, $res, $code_match);
+        $parse_html_code_pattern = /** @lang RegExp */
+            '#<a class="single-line" href="\S+?">\s*(.+?)<#';
+
+        preg_match_all($parse_html_code_pattern, $res, $code_match);
+        $ascii_only = preg_replace('/[[:^print:]]/', '', $code_match[1]);
+        array_shift($ascii_only);  // remove redundant result (the first one)
+        $code_only = array_filter(array_map(function ($each) {
+            $exploded = explode(' ', $each);
+            $code     = array_values(preg_grep('#^[a-zA-Z]+-\d+$#', array_filter($exploded)));
+
+            if ($code) {
+                return $exploded[0] . ' ' . $code[0];
+            }
+
+            return false;
+        }, $ascii_only));
 
         return count($code_match[1])
-            ? str_replace(
-                self::SENSITIVE_WORDS['search'],
-                self::SENSITIVE_WORDS['replace'],
-                implode("\n", $code_match[1])
-            )
+            ? implode("\n", $code_only)
             : false;
     }
 
