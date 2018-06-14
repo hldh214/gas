@@ -88,7 +88,6 @@ class JLibController extends Controller
 
         preg_match_all($parse_html_code_pattern, $res, $code_match);
         $ascii_only = preg_replace('/[[:^print:]]/', '', $code_match[1]);
-        array_shift($ascii_only);  // remove redundant result (the first one)
         $code_only = array_filter(array_map(function ($each) {
             $exploded = explode(' ', $each);
             $code     = array_values(preg_grep('#^[a-zA-Z]+-\d+$#', array_filter($exploded)));
