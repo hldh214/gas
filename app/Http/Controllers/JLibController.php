@@ -76,7 +76,8 @@ class JLibController extends Controller
                             'filename' => 'data',
                             'contents' => $this->opener->get($image_url)->getBody()
                         ]
-                    ]
+                    ],
+                    'timeout'   => 0
                 ]
             )->getBody()->getContents();
         } catch (ConnectException $exception) {
