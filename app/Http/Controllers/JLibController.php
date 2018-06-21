@@ -10,8 +10,8 @@ use GuzzleHttp\Promise;
 class JLibController extends Controller
 {
     const SENSITIVE_WORDS = [
-        'search'  => ['素人娘', '盗撮', '肉奴隷', '発射', '大乱交', '2穴中出'],
-        'replace' => ['素x人x娘', '盗x撮', '肉x奴x隷', '発x射', '大x乱x交', '2x穴x中x出']
+        'search'  => ['素人娘', '盗撮', '肉奴隷', '発射', '大乱交', '2穴中出', '近親相姦'],
+        'replace' => ['素x人x娘', '盗x撮', '肉x奴x隷', '発x射', '大x乱x交', '2x穴x中x出', '近x親x相x姦']
     ];
 
     const QUALITY_HD = 1;
