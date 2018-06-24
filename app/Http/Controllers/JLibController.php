@@ -195,11 +195,12 @@ class JLibController extends Controller
      */
     public function get_info($code)
     {
-        $title_pattern = '/<h3>(.+)<\/h3>/';
-        $date_pattern  = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
-        $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
-        $gid_pattern   = '/gid *= *(\d+)/';
-        $uc_pattern    = '/uc *= *(\d+);/';
+        $title_pattern           = '/<h3>(.+)<\/h3>/';
+        $date_pattern            = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
+        $cover_pattern           = '/<a class="bigImage" href="(.+?)">/';
+        $gid_pattern             = '/gid *= *(\d+)/';
+        $uc_pattern              = '/uc *= *(\d+);/';
+        $uncensored_flag_pattern = '/<li\s*class="active"><a\s*href=".+uncensored">/';
 
         try {
             $res = $this->opener->get('/' . $code)->getBody()->getContents();
@@ -207,12 +208,12 @@ class JLibController extends Controller
             return false;
         }
 
-
         preg_match($title_pattern, $res, $title_match);
         preg_match($date_pattern, $res, $date_match);
         preg_match($cover_pattern, $res, $cover_match);
         preg_match($gid_pattern, $res, $gid_match);
         preg_match($uc_pattern, $res, $uc_match);
+        preg_match($uncensored_flag_pattern, $res, $uncensored_flag_match);
 
         if (!isset($title_match[1])) {
             return false;
@@ -224,6 +225,7 @@ class JLibController extends Controller
         $response = '车牌&车型&司机: ' . $title_match[1]
                     . "\n" . '发车日期: ' . $date_match[1];
 
+        $response .= "\n" . '类型: ' . (empty($uncensored_flag_match) ? '骑兵' : '步兵');
 
         $response .= "\n" . '<a href="'
                      . str_replace('javbus.com', 'javcdn.pw', $cover_match[1])
