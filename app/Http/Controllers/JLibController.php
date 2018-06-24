@@ -27,7 +27,6 @@ class JLibController extends Controller
         ]);
     }
 
-    // todo rand_code_from_cache 添加分类 #1 #2 etc...
     public function index()
     {
         $app = app('wechat.official_account');
@@ -84,10 +83,13 @@ class JLibController extends Controller
             return '服务器开小差了, 请过一会再来玩';
         }
 
-        $parse_html_code_pattern = /** @lang RegExp */
+        $html_code_pattern  = /** @lang RegExp */
             '#<a class="single-line" href="(\S+?)".*?>#';
+        $best_guess_pattern = /** @lang RegExp */
+            '#<input\s*id="search".+?value="(\S+)">#';
 
-        preg_match_all($parse_html_code_pattern, $res, $code_match);
+        preg_match_all($html_code_pattern, $res, $code_match);
+        preg_match($best_guess_pattern, $res, $best_guess_match);
 
         if (!empty($code_match[1])) {
             $code_only = array_filter(array_map(function ($each) {
@@ -100,10 +102,11 @@ class JLibController extends Controller
                 return false;
             }, $code_match[1]));
 
-            return "你是不是要找:\n" . implode("\n", array_intersect_key(
-                    $code_only,
-                    array_unique(array_map("StrToLower", $code_only))
-                ));
+            return $best_guess_match[1] . "\n相关车牌:\n" .
+                   implode("\n", array_intersect_key(
+                       $code_only,
+                       array_unique(array_map("StrToLower", $code_only))
+                   ));
         }
 
         return false;
