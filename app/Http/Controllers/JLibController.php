@@ -244,6 +244,28 @@ class JLibController extends Controller
     }
 
     /**
+     * 短网址处理
+     *
+     * @param array $urls
+     * @return array|bool
+     */
+    public function make_preview($urls)
+    {
+        try {
+            $res = $this->opener->post('http://tool.chinaz.com/AjaxSeo.aspx?t=sinadwz', [
+                'form_params' => [
+                    'url' => implode('%5E', $urls)
+                ]
+            ])->getBody()->getContents();
+        } catch (ConnectException $exception) {
+            return false;
+        }
+
+
+        return array_column(json_decode($res, true), 'url_short');
+    }
+
+    /**
      * 传入用户的原始输入, 返回查询到的信息(带磁链), 查不到则返回jav_lib高评价里的随机番号
      *
      * @param string $code
