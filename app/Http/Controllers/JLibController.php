@@ -204,6 +204,7 @@ class JLibController extends Controller
         $gid_pattern             = '/gid *= *(\d+)/';
         $uc_pattern              = '/uc *= *(\d+);/';
         $uncensored_flag_pattern = '/<li\s*class="active"><a\s*href=".+uncensored">/';
+        $pic_pattern             = '/<a class="sample-box" href="(.+?)">/';
 
         try {
             $res = $this->opener->get('/' . $code)->getBody()->getContents();
@@ -217,6 +218,7 @@ class JLibController extends Controller
         preg_match($gid_pattern, $res, $gid_match);
         preg_match($uc_pattern, $res, $uc_match);
         preg_match($uncensored_flag_pattern, $res, $uncensored_flag_match);
+        preg_match_all($pic_pattern, $res, $pic_match);
 
         if (!isset($title_match[1])) {
             return false;
@@ -233,6 +235,10 @@ class JLibController extends Controller
         $response .= "\n" . '<a href="'
                      . str_replace('javbus.com', 'javcdn.pw', $cover_match[1])
                      . '">封面图</a>';
+
+        if ($pic_match[1]) {
+            $response .= $this->make_preview($pic_match[1]);
+        }
 
         $magnet   = $this->get_magnet(
             $code, self::QUALITY_HD,
@@ -261,8 +267,13 @@ class JLibController extends Controller
             return false;
         }
 
+        $short_urls = array_column(json_decode($res, true), 'url_short');
+        $return     = "";
+        foreach ($short_urls as $index => $short_url) {
+            $return .= "\n<a href=\"" . $short_url . '">截图' . $index . '</a>';
+        }
 
-        return array_column(json_decode($res, true), 'url_short');
+        return $return;
     }
 
     /**
