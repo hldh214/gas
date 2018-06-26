@@ -277,19 +277,27 @@ class JLibController extends Controller
     }
 
     /**
-     * 传入用户的原始输入, 返回查询到的信息(带磁链), 查不到则返回jav_lib高评价里的随机番号
+     * 传入用户的原始输入, 返回查询到的信息(带磁链)
      *
      * @param string $code
      * @return string
      */
     public function origin_query($code)
     {
+        if (str_contains($code, '@')) {
+            // 翻页请求
+            list($code, $page) = mb_split('@', $code);
+            if (empty($page)) {
+                return '请输入页数, 例如 里美ゆりあ@2';
+            }
+        }
+
         $movie_pattern = '/class="movie-box" href="(.+)">/';  // 单页影片数
         $pages_pattern = '#href="/search/\S+/(\d+)">\d+#';  // 页数
 
         $promises = [
-            $this->opener->getAsync('/search/' . urlencode($code)),
-            $this->opener->getAsync('/uncensored/search/' . urlencode($code))
+            $this->opener->getAsync('/search/' . urlencode($code) . (isset($page) ? '/' . $page : null)),
+            $this->opener->getAsync('/uncensored/search/' . urlencode($code) . (isset($page) ? '/' . $page : null))
         ];
 
         try {
@@ -324,7 +332,21 @@ class JLibController extends Controller
 
         if (count($pages_match[1]) || count($unpages_match[1])) {
             // 需要翻页
-            return '结果太多, 尝试缩小搜索范围吧';
+            $page     = isset($page) ? $page : 1;
+            $response = "你是不是要找:";
+            foreach ($movie_match[1] as $v) {
+                $arr      = explode('/', $v);
+                $response = $response . "\n" . end($arr);
+            }
+            foreach ($unmovie_match[1] as $v) {
+                $arr      = explode('/', $v);
+                $response = $response . "\n" . end($arr);
+            }
+
+            $response .= "\n\n您当前在第 {$page} 页, 下一页请回复 {$code}@" . ($page + 1);
+
+            return $response;
+
         }
 
         if (
@@ -348,6 +370,10 @@ class JLibController extends Controller
             }
 
             return $response;
+        }
+
+        if (isset($page)) {
+            return "已经是最后一页, 返回上一页请回复 {$code}@" . ($page - 1);
         }
 
         return '没有此车牌, 获取随机车牌请回复 #';
