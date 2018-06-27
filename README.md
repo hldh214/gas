@@ -14,16 +14,17 @@
 
 * [javbus](https://www.javbus.com/)
 * [javlibrary](http://www.javlibrary.com/)
+* [avgle](https://avgle.io)
 
 ### Install
 
-**Source**
+**From Source**
 
 1. Cloned it from github or download package as zip.
 2. Unzip code to your webserver.
-3. Go to //youhost.com/ and that's all <3.
+3. For more information [click here](https://www.easywechat.com/docs/master)
 
-**Docker**
+**From Docker**
 
 [![Docker Stars](https://img.shields.io/docker/stars/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
@@ -34,8 +35,6 @@ $ docker run -d -p 8000:80 hldh214/gas
 ```
 
 ### Future features
-
-
 
 * more readable code.
 * more source.
@@ -50,4 +49,4 @@ Feel free to contribute.
 
 ### License
 
-Gas is open-source software licensed under the MIT License. See the LICENSE.txt file for more information.
+Gas is open-source software licensed under the MIT License. See the LICENSE file for more information.
