@@ -22,7 +22,8 @@
 
 1. Cloned it from github or download package as zip.
 2. Unzip code to your webserver.
-3. For more information [click here](https://www.easywechat.com/docs/master)
+3. `php artisan crawl`
+4. For more information [click here](https://www.easywechat.com/docs/master)/[or here](https://laravel.com/docs/5.6/installation)
 
 **From Docker**
 
