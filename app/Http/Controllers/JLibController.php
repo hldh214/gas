@@ -312,14 +312,14 @@ class JLibController extends Controller
         preg_match_all($movie_pattern, $res, $movie_match);
         preg_match_all($movie_pattern, $uncensored_res, $unmovie_match);
 
-        if (count($movie_match[1]) == 1) {
+        if ((count($movie_match[1]) == 1) && (count($unmovie_match[1]) == 0)) {
             // 用户搜索结果唯一
             $code = explode('/', $movie_match[1][0]);
 
             return $this->get_info(end($code));
         }
 
-        if (count($unmovie_match[1]) == 1) {
+        if ((count($unmovie_match[1]) == 1) && (count($movie_match[1]) == 0)) {
             // 用户搜索结果唯一
             $code = explode('/', $unmovie_match[1][0]);
 
