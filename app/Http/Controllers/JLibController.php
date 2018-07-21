@@ -55,6 +55,13 @@ class JLibController extends Controller
             return $this->get_info_by_image($message['PicUrl']) ?: '搜索结果为空, 请保证图中人脸清晰可见';
         }, Message::IMAGE);
 
+        $app->server->push(function ($message) {
+            if ($message['Event'] == 'subscribe') {
+                return '<a href="https://github.com/hldh214/gas">https://github.com/hldh214/gas</a>';
+            }
+            return null;
+        }, Message::EVENT);
+
         return $app->server->serve();
     }
 
