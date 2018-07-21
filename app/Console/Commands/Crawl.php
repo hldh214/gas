@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
+use think\Exception;
 
 class Crawl extends Command
 {
@@ -62,7 +63,13 @@ class Crawl extends Command
         }
 
         foreach ($codes as $code) {
-            $res = $jlib->get_info($code);
+            try {
+                $res = $jlib->get_info($code);
+            } catch (\Exception $exception) {
+                dump($exception);
+                dd($code);
+            }
+
             if ($res) {
                 $info[] = $res;
             }
