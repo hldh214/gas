@@ -59,6 +59,7 @@ class JLibController extends Controller
             if ($message['Event'] == 'subscribe') {
                 return '<a href="https://github.com/hldh214/gas">https://github.com/hldh214/gas</a>';
             }
+
             return null;
         }, Message::EVENT);
 
@@ -265,16 +266,17 @@ class JLibController extends Controller
     public function make_preview($urls)
     {
         try {
-            $res = $this->opener->post('http://tool.chinaz.com/AjaxSeo.aspx?t=sinadwz', [
+            $res = $this->opener->post('http://www.ft12.com/create.php?m=index&a=urlCreate', [
                 'form_params' => [
-                    'url' => implode('%5E', $urls)
+                    'url'  => implode("\n", $urls),
+                    'type' => '7'
                 ]
             ])->getBody()->getContents();
         } catch (ConnectException $exception) {
             return false;
         }
 
-        $short_urls = array_column(json_decode($res, true), 'url_short');
+        $short_urls = explode("\n", json_decode($res, true)['list']);
         $return     = "";
         foreach ($short_urls as $index => $short_url) {
             $return .= "\n<a href=\"" . $short_url . '">截图' . $index . '</a>';
