@@ -10,6 +10,7 @@
  */
 
 return [
-    'javbus_base_url' => env('JAVBUS_BASE_URL', 'https://www.javbus.com/'),
-    'timeout'         => env('TIMEOUT', 5)
+    'javbus_base_url'     => env('JAVBUS_BASE_URL', 'https://www.javbus.com/'),
+    'javlibrary_base_url' => env('JAVLIBRARY_BASE_URL', 'http://www.javlibrary.com/'),
+    'timeout'             => env('TIMEOUT', 5)
 ];

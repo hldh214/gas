@@ -46,7 +46,7 @@ class Crawl extends Command
         $jlib         = app()->make('App\Http\Controllers\JLibController');
         $code_pattern = '/<a href="\.\/\?v=.+?" title="(\S+) {1}/';
         $client       = new Client([
-            'base_uri' => 'http://www.javlibrary.com/',
+            'base_uri' => config('jlib.javlibrary_base_url'),
             'verify'   => false
         ]);
 
