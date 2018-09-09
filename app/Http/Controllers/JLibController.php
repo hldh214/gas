@@ -258,28 +258,16 @@ class JLibController extends Controller
     }
 
     /**
-     * 短网址处理
+     * array => <a href=""></a>
      *
      * @param array $urls
      * @return array|bool
      */
     public function make_preview($urls)
     {
-        try {
-            $res = $this->opener->post('http://www.ft12.com/create.php?m=index&a=urlCreate', [
-                'form_params' => [
-                    'url'  => implode("\n", $urls),
-                    'type' => '7'
-                ]
-            ])->getBody()->getContents();
-        } catch (ConnectException $exception) {
-            return false;
-        }
-
-        $short_urls = explode("\n", json_decode($res, true)['list']);
-        $return     = "";
-        foreach ($short_urls as $index => $short_url) {
-            $return .= "\n<a href=\"" . $short_url . '">截图' . $index . '</a>';
+        $return = "";
+        foreach ($urls as $index => $url) {
+            $return .= "\n<a href=\"" . $url . '">截图' . $index . '</a>';
         }
 
         return $return;
@@ -290,6 +278,7 @@ class JLibController extends Controller
      *
      * @param string $code
      * @return string
+     * @throws \Throwable
      */
     public function origin_query($code)
     {
@@ -392,6 +381,7 @@ class JLibController extends Controller
      * 从缓存随机取一条信息
      *
      * @return string
+     * @throws \Exception
      */
     public function rand_code_from_cache()
     {
