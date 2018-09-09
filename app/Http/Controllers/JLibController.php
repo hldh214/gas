@@ -298,14 +298,10 @@ class JLibController extends Controller
             $this->opener->getAsync('/uncensored/search/' . urlencode($code) . (isset($page) ? '/' . $page : null))
         ];
 
-        try {
-            $results = Promise\unwrap($promises);
-        } catch (ConnectException $exception) {
-            return false;
-        }
+        $results = Promise\settle($promises)->wait();
 
-        $res            = $results[0]->getBody()->getContents();
-        $uncensored_res = $results[1]->getBody()->getContents();
+        $res            = array_key_exists('value', $results[0]) ? $results[0]['value']->getBody()->getContents() : '';
+        $uncensored_res = array_key_exists('value', $results[1]) ? $results[1]['value']->getBody()->getContents() : '';
 
         preg_match_all($movie_pattern, $res, $movie_match);
         preg_match_all($movie_pattern, $uncensored_res, $unmovie_match);
