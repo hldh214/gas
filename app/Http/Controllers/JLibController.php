@@ -267,6 +267,10 @@ class JLibController extends Controller
     {
         $return = "";
         foreach ($urls as $index => $url) {
+            if ($index > 15) {
+                break;
+            }
+
             $return .= "\n<a href=\"" . $url . '">截图' . $index . '</a>';
         }
 
