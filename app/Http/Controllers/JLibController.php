@@ -371,7 +371,7 @@ class JLibController extends Controller
         }
 
         if (isset($page)) {
-            return "已经是最后一页, 返回上一页请回复 {$code}@" . ($page - 1);
+            return "已经是最后一页啦";
         }
 
         return '没有此车牌, 获取随机车牌请回复 #';
