@@ -78,10 +78,10 @@ class JLibController extends Controller
      */
     public function top_n($n = 10)
     {
-        $return = "车牌号\t->\t热度";
+        $return = "车牌号    ->    热度";
         $res    = Redis::zrevrange('trending', 0, $n - 1, 'withscores');
         foreach ($res as $code => $score) {
-            $return .= "\n" . $code . "\t->\t" . $score;
+            $return .= "\n" . $code . "    ->    " . $score;
         }
 
         return $return;
