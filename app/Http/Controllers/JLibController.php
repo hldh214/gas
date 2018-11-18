@@ -6,6 +6,7 @@ use EasyWeChat\Kernel\Messages\Message;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise;
+use Illuminate\Support\Facades\Redis;
 
 class JLibController extends Controller
 {
@@ -203,6 +204,7 @@ class JLibController extends Controller
      *
      * @param string $code
      * @return string | boolean
+     * @throws \Exception
      */
     public function get_info($code)
     {
@@ -258,7 +260,7 @@ class JLibController extends Controller
 
         if (preg_match('/^([a-zA-Z]+)-?([0-9]+)$/', $code)) {
             // 写缓存, 这里暂时只缓存一般格式的番号, 例如 ABS-130(字母-数字)
-            cache()->forever($code, $return);
+            Redis::set($code, $return);
         }
 
         return $return;
@@ -297,8 +299,8 @@ class JLibController extends Controller
             // 尝试读缓存
             $parsed = strtoupper($code_match[1]) . '-' . $code_match[2];
 
-            if (cache()->has($parsed)) {
-                return cache($parsed);
+            if (Redis::exists($parsed)) {
+                return Redis::get($parsed);
             }
         }
 
@@ -397,12 +399,9 @@ class JLibController extends Controller
      * 从缓存随机取一条信息
      *
      * @return string
-     * @throws \Exception
      */
     public function rand_code_from_cache()
     {
-        $a = (array)cache()->get('best_rated');
-
-        return $a[mt_rand(0, count($a) - 1)];
+        return Redis::srandmember('best_rated');
     }
 }

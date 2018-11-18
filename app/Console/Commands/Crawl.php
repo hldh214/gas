@@ -5,7 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
-use think\Exception;
+use Illuminate\Support\Facades\Redis;
+
 
 class Crawl extends Command
 {
@@ -37,12 +38,12 @@ class Crawl extends Command
      * Execute the console command.
      *
      * @return void
+     * @throws \Throwable
      */
     public function handle()
     {
         $codes    = [];
         $promises = [];
-        $info     = [];
 
         $jlib         = app()->make('App\Http\Controllers\JLibController');
         $code_pattern = '/<a href="\.\/\?v=.+?" title="(\S+) {1}/';
@@ -71,10 +72,8 @@ class Crawl extends Command
             }
 
             if ($res) {
-                $info[] = $res;
+                Redis::sadd('best_rated', $res);
             }
         }
-
-        cache()->forever('best_rated', $info);
     }
 }
