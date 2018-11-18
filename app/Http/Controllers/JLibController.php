@@ -32,7 +32,7 @@ class JLibController extends Controller
     {
         $app = app('wechat.official_account');
         $app->server->push(function ($message) {
-            $content = $message['Content'];
+            $content = trim($message['Content']);
             if ($content == '#') {
                 // 获取随机番号
                 return $this->rand_code_from_cache();
