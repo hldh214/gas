@@ -33,19 +33,22 @@ class JLibController extends Controller
         $app = app('wechat.official_account');
         $app->server->push(function ($message) {
             $content = $message['Content'];
-            if (substr($content, 0, 2) == '@@') {
-                // 只查询磁链(标清)
-                $content = substr($content, 2);
-
-                return $this->get_magnet($content, self::QUALITY_SD) ?: '请注意大写和连字符, 例如 ABS-130';
+            if ($content == '#') {
+                // 获取随机番号
+                return $this->rand_code_from_cache();
             } elseif (substr($content, 0, 1) == '@') {
                 // 只查询磁链(高清, 如果有)
                 $content = substr($content, 1);
 
                 return $this->get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130';
-            } elseif ($content == '#') {
-                // 获取随机番号
-                return $this->rand_code_from_cache();
+            } elseif (substr($content, 0, 2) == '@@') {
+                // 只查询磁链(标清)
+                $content = substr($content, 2);
+
+                return $this->get_magnet($content, self::QUALITY_SD) ?: '请注意大写和连字符, 例如 ABS-130';
+            } elseif ($content == '#t') {
+                // top10
+                return $this->top_n();
             } else {
                 // 查询全部信息
                 return $this->origin_query($content) ?: '服务器开小差了, 请过一会再来玩';
@@ -65,6 +68,23 @@ class JLibController extends Controller
         }, Message::EVENT);
 
         return $app->server->serve();
+    }
+
+    /**
+     * 从 Redis 取 trending 计算 top N
+     *
+     * @param int $n
+     * @return string
+     */
+    public function top_n($n = 10)
+    {
+        $return = "车牌号\t->\t热度";
+        $res    = Redis::zrevrange('trending', 0, $n - 1, 'withscores');
+        foreach ($res as $code => $score) {
+            $return .= "\n" . $code . "\t->\t" . $score;
+        }
+
+        return $return;
     }
 
     /**
