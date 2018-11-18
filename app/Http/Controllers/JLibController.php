@@ -254,14 +254,21 @@ class JLibController extends Controller
         ) ?: '找不到神秘代码';
         $response .= "\n" . $magnet;
 
-        return str_replace(self::SENSITIVE_WORDS['search'], self::SENSITIVE_WORDS['replace'], $response);
+        $return = str_replace(self::SENSITIVE_WORDS['search'], self::SENSITIVE_WORDS['replace'], $response);
+
+        if (preg_match('/^([a-zA-Z]+)-?([0-9]+)$/', $code)) {
+            // 写缓存, 这里暂时只缓存一般格式的番号, 例如 ABS-130(字母-数字)
+            cache()->forever($code, $return);
+        }
+
+        return $return;
     }
 
     /**
      * array => <a href=""></a>
      *
      * @param array $urls
-     * @return array|bool
+     * @return string
      */
     public function make_preview($urls)
     {
@@ -286,6 +293,15 @@ class JLibController extends Controller
      */
     public function origin_query($code)
     {
+        if (preg_match('/^([a-zA-Z]+)-?([0-9]+)$/', $code, $code_match)) {
+            // 尝试读缓存
+            $parsed = strtoupper($code_match[1]) . '-' . $code_match[2];
+
+            if (cache()->has($parsed)) {
+                return cache($parsed);
+            }
+        }
+
         if (str_contains($code, '@')) {
             // 翻页请求
             list($code, $page) = mb_split('@', $code);
