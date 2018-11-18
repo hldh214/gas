@@ -300,6 +300,8 @@ class JLibController extends Controller
             $parsed = strtoupper($code_match[1]) . '-' . $code_match[2];
 
             if (Redis::exists($parsed)) {
+                Redis::zincrby('trending', 1, $parsed);
+
                 return Redis::get($parsed);
             }
         }
