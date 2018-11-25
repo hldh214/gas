@@ -35,24 +35,26 @@ class JLibController extends Controller
             $content = trim($message['Content']);
             if ($content == '#') {
                 // 获取随机番号
-                return $this->rand_code_from_cache();
+                $return = $this->rand_code_from_cache();
             } elseif (substr($content, 0, 1) == '@') {
                 // 只查询磁链(高清, 如果有)
                 $content = substr($content, 1);
 
-                return $this->get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130';
+                $return = $this->get_magnet($content) ?: '请注意大写和连字符, 例如 ABS-130';
             } elseif (substr($content, 0, 2) == '@@') {
                 // 只查询磁链(标清)
                 $content = substr($content, 2);
 
-                return $this->get_magnet($content, self::QUALITY_SD) ?: '请注意大写和连字符, 例如 ABS-130';
+                $return = $this->get_magnet($content, self::QUALITY_SD) ?: '请注意大写和连字符, 例如 ABS-130';
             } elseif ($content == '#t') {
                 // top10
-                return $this->top_n();
+                $return = $this->top_n();
             } else {
                 // 查询全部信息
-                return $this->origin_query($content) ?: '服务器开小差了, 请过一会再来玩';
+                $return = $this->origin_query($content) ?: '服务器开小差了, 请过一会再来玩';
             }
+
+            return config('jlib.no_sensitive_contents') ? self::grep_sensitive_content($return) : $return;
         }, Message::TEXT);
 
         $app->server->push(function ($message) {
@@ -68,6 +70,17 @@ class JLibController extends Controller
         }, Message::EVENT);
 
         return $app->server->serve();
+    }
+
+    /**
+     * 去 a 链接(敏感图片)
+     *
+     * @param string $content
+     * @return string|string[]|null
+     */
+    public static function grep_sensitive_content($content)
+    {
+        return preg_replace('#\n<a.+</a>#', '', $content);
     }
 
     /**
