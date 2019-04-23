@@ -92,7 +92,7 @@ class JLibController extends Controller
      */
     public static function add_js_proxy($content, $js_proxy_url = 'https://zjcqoo.github.io/-----')
     {
-        return preg_replace('#href="(https://.+?)"#', 'href="' . $js_proxy_url . '\1""', $content);
+        return preg_replace('#href="(https://.+?)"#', 'href="' . $js_proxy_url . '\1"', $content);
     }
 
     /**
