@@ -13,5 +13,6 @@ return [
     'javbus_base_url'       => env('JAVBUS_BASE_URL', 'https://www.javbus.com/'),
     'javlibrary_base_url'   => env('JAVLIBRARY_BASE_URL', 'http://www.javlibrary.com/'),
     'timeout'               => env('TIMEOUT', 5),
-    'no_sensitive_contents' => env('NO_SENSITIVE_CONTENTS', false)
+    'no_sensitive_contents' => env('NO_SENSITIVE_CONTENTS', false),
+    'add_js_proxy'          => env('ADD_JS_PROXY', false)
 ];

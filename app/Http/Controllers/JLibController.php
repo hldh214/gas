@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use EasyWeChat\Kernel\Messages\Message;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise;
 use Illuminate\Support\Facades\Redis;
+use Throwable;
 
 class JLibController extends Controller
 {
     const SENSITIVE_WORDS = [
-        'search'  => ['素人娘', '盗撮', '肉奴隷', '発射', '大乱交', '2穴中出', '近親相姦'],
-        'replace' => ['素x人x娘', '盗x撮', '肉x奴x隷', '発x射', '大x乱x交', '2x穴x中x出', '近x親x相x姦']
+        'search'  => ['素人娘', '盗撮', '肉奴隷', '発射', '大乱交', '2穴中出', '近親相姦', '発妻'],
+        'replace' => ['素x人x娘', '盗x撮', '肉x奴x隷', '発x射', '大x乱x交', '2x穴x中x出', '近x親x相x姦', '発x妻']
     ];
 
     const QUALITY_HD = 1;
@@ -54,7 +56,15 @@ class JLibController extends Controller
                 $return = $this->origin_query($content) ?: '服务器开小差了, 请过一会再来玩';
             }
 
-            return config('jlib.no_sensitive_contents') ? self::grep_sensitive_content($return) : $return;
+            if (config('jlib.no_sensitive_contents')) {
+                $return = self::grep_sensitive_content($return);
+            }
+
+            if (config('jlib.add_js_proxy')) {
+                $return = self::add_js_proxy($return, config('jlib.add_js_proxy'));
+            }
+
+            return $return;
         }, Message::TEXT);
 
         $app->server->push(function ($message) {
@@ -70,6 +80,19 @@ class JLibController extends Controller
         }, Message::EVENT);
 
         return $app->server->serve();
+    }
+
+    /**
+     * 加前置代理
+     * Credit: https://github.com/EtherDream/jsproxy-browser
+     *
+     * @param string $content
+     * @param string $js_proxy_url
+     * @return string|string[]|null
+     */
+    public static function add_js_proxy($content, $js_proxy_url = 'https://zjcqoo.github.io/-----')
+    {
+        return preg_replace('#href="(https://.+?)"#', 'href="' . $js_proxy_url . '\1""', $content);
     }
 
     /**
@@ -237,7 +260,7 @@ class JLibController extends Controller
      *
      * @param string $code
      * @return string | boolean
-     * @throws \Exception
+     * @throws Exception
      */
     public function get_info($code)
     {
@@ -324,7 +347,7 @@ class JLibController extends Controller
      *
      * @param string $code
      * @return string
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function origin_query($code)
     {
