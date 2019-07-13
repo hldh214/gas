@@ -1,35 +1,23 @@
-**Gas** is a JAV magnet crawler, written in PHP.
-
-[简体中文](.github/README-zh-CN.md)
+## JLib
 
 ![qrcode_for_gh_459aed460bf4_258](https://user-images.githubusercontent.com/5501843/61165886-d45bc580-a558-11e9-8696-65ba98806e51.jpg)
 
-## Table of Contents
-
-- [Sources](#sources)
-- [Install](#install)
-- [Future features](#future-features)
-- [Contribution](#contribution)
-- [License](#license)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-### Sources
+### 车厂
 
 * [javbus](https://www.javbus.com/)
 * [javlibrary](http://www.javlibrary.com/)
 * [avgle](https://avgle.io)
 
-### Install
+### 安装指引
 
-**From Source**
+**源码安装**
 
-1. Cloned it from github or download package as zip.
-2. Unzip code to your webserver.
+1. 下载项目源码.
+2. 在服务器上解压.
 3. `composer update -vvv & php artisan crawl`
 4. For more information [click here](https://www.easywechat.com/docs/master)/[or here](https://laravel.com/docs/5.6/installation)
 
-**From Docker**
+**Docker**
 
 [![Docker Stars](https://img.shields.io/docker/stars/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
@@ -39,10 +27,10 @@
 $ docker run -d -p 8000:80 hldh214/gas
 ```
 
-### Future features
+### 画饼
 
-* more readable code.
-* more source.
+* 更高的代码可读性.
+* 更多的车厂.
 
 ### Contribution
 
@@ -55,3 +43,4 @@ Feel free to contribute.
 ### License
 
 Gas is open-source software licensed under the MIT License. See the LICENSE file for more information.
+
