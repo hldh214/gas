@@ -203,7 +203,9 @@ class JLibController extends Controller
                 return false;
             }
 
-            preg_match($gid_pattern, $res, $gid_match);
+            if (!preg_match($gid_pattern, $res, $gid_match)) {
+                return false;
+            }
             preg_match($uc_pattern, $res, $uc_match);
             preg_match($cover_pattern, $res, $cover_match);
         }
