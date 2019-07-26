@@ -7,8 +7,8 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Promise;
-use Illuminate\Support\Facades\Redis;
-use Throwable;
+use Illuminate\Support\Str;
+use Psr\Http\Message\ResponseInterface;
 
 class JLibController extends Controller
 {
@@ -19,6 +19,11 @@ class JLibController extends Controller
 
     const QUALITY_HD = 1;
     const QUALITY_SD = 2;
+
+    /**
+     * @var Client GuzzleHttp Client
+     */
+    private $opener;
 
     public function __construct()
     {
@@ -115,7 +120,7 @@ class JLibController extends Controller
     public function top_n($n = 10)
     {
         $return = "车牌号    ->    热度";
-        $res    = Redis::zrevrange('trending', 0, $n - 1, 'withscores');
+        $res    = app('redis')->zrevrange('trending', 0, $n - 1, ['withscores' => true]);
         foreach ($res as $code => $score) {
             $return .= "\n" . $code . "    ->    " . $score;
         }
@@ -168,10 +173,10 @@ class JLibController extends Controller
             }, $code_match[1]));
 
             return $best_guess_match[1] . "\n相关车牌:\n" .
-                   implode("\n", array_intersect_key(
-                       $code_only,
-                       array_unique(array_map("StrToLower", $code_only))
-                   ));
+                implode("\n", array_intersect_key(
+                    $code_only,
+                    array_unique(array_map("StrToLower", $code_only))
+                ));
         }
 
         return false;
@@ -192,7 +197,8 @@ class JLibController extends Controller
             $gid_match   = $extra_data['gid_match'];
             $uc_match    = $extra_data['uc_match'];
         } else {
-            $cover_pattern = '/<a class="bigImage" href="(.+?)">/';
+            $cover_pattern = /** @lang RegExp */
+                '/<a class="bigImage" href="(.+?)">/';
             $gid_pattern   = '/gid *= *(\d+)/';
             $uc_pattern    = '/uc *= *(\d+);/';
             // 以上三个正则用于匹配 ajax 查询 javbus 上的磁链所需要的参数
@@ -268,11 +274,13 @@ class JLibController extends Controller
     {
         $title_pattern           = '/<h3>(.+)<\/h3>/';
         $date_pattern            = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
-        $cover_pattern           = '/<a class="bigImage" href="(.+?)">/';
+        $cover_pattern           = /** @lang RegExp */
+            '/<a class="bigImage" href="(.+?)">/';
         $gid_pattern             = '/gid *= *(\d+)/';
         $uc_pattern              = '/uc *= *(\d+);/';
         $uncensored_flag_pattern = '/<li\s*class="active"><a\s*href=".+uncensored">/';
-        $pic_pattern             = '/<a class="sample-box" href="(.+?)">/';
+        $pic_pattern             = /** @lang RegExp */
+            '/<a class="sample-box" href="(.+?)">/';
 
         try {
             $res = $this->opener->get('/' . $code)->getBody()->getContents();
@@ -296,13 +304,13 @@ class JLibController extends Controller
             $date_match[1] = '未知';
         }
         $response = '车牌&车型&司机: ' . $title_match[1]
-                    . "\n" . '发车日期: ' . $date_match[1];
+            . "\n" . '发车日期: ' . $date_match[1];
 
         $response .= "\n" . '类型: ' . (empty($uncensored_flag_match) ? '骑兵' : '步兵');
 
         $response .= "\n" . '<a href="'
-                     . str_replace('javbus.com', 'javcdn.pw', $cover_match[1])
-                     . '">封面图</a>';
+            . str_replace('javbus.com', 'javcdn.pw', $cover_match[1])
+            . '">封面图</a>';
 
         if ($pic_match[1]) {
             $response .= $this->make_preview($pic_match[1]);
@@ -318,7 +326,7 @@ class JLibController extends Controller
 
         if (preg_match('/^([a-zA-Z]+)-?([0-9]+)$/', $code)) {
             // 写缓存, 这里暂时只缓存一般格式的番号, 例如 ABS-130(字母-数字)
-            Redis::set($code, $return);
+            app('redis')->set($code, $return);
         }
 
         return $return;
@@ -349,7 +357,7 @@ class JLibController extends Controller
      *
      * @param string $code
      * @return string
-     * @throws Throwable
+     * @throws Exception
      */
     public function origin_query($code)
     {
@@ -357,14 +365,14 @@ class JLibController extends Controller
             // 尝试读缓存
             $parsed = strtoupper($code_match[1]) . '-' . $code_match[2];
 
-            if (Redis::exists($parsed)) {
-                Redis::zincrby('trending', 1, $parsed);
+            if (app('redis')->exists($parsed)) {
+                app('redis')->zincrby('trending', 1, $parsed);
 
-                return Redis::get($parsed);
+                return app('redis')->get($parsed);
             }
         }
 
-        if (str_contains($code, '@')) {
+        if (Str::contains($code, '@')) {
             // 翻页请求
             list($code, $page) = mb_split('@', $code);
             if (empty($page)) {
@@ -382,6 +390,7 @@ class JLibController extends Controller
 
         $results = Promise\settle($promises)->wait();
 
+        /** @var ResponseInterface[][] $results */
         $res            = array_key_exists('value', $results[0]) ? $results[0]['value']->getBody()->getContents() : '';
         $uncensored_res = array_key_exists('value', $results[1]) ? $results[1]['value']->getBody()->getContents() : '';
 
@@ -406,25 +415,6 @@ class JLibController extends Controller
         preg_match_all($pages_pattern, $res, $pages_match);
         preg_match_all($pages_pattern, $uncensored_res, $unpages_match);  // 无码页数
 
-        if (count($pages_match[1]) || count($unpages_match[1])) {
-            // 需要翻页
-            $page     = isset($page) ? $page : 1;
-            $response = "你是不是要找:";
-            foreach ($movie_match[1] as $v) {
-                $arr      = explode('/', $v);
-                $response = $response . "\n" . end($arr);
-            }
-            foreach ($unmovie_match[1] as $v) {
-                $arr      = explode('/', $v);
-                $response = $response . "\n" . end($arr);
-            }
-
-            $response .= "\n\n您当前在第 {$page} 页, 下一页请回复 {$code}@" . ($page + 1);
-
-            return $response;
-
-        }
-
         if (
             in_array(config('jlib.javbus_base_url') . $code, $movie_match[1])
             || in_array(config('jlib.javbus_base_url') . $code, $unmovie_match[1])
@@ -434,8 +424,8 @@ class JLibController extends Controller
         }
 
         if ((count($movie_match[1]) > 1) || (count($unmovie_match[1]) > 1)) {
-            // 正常的模糊查询
             $response = "你是不是要找:";
+            // 正常的模糊查询
             foreach ($movie_match[1] as $v) {
                 $arr      = explode('/', $v);
                 $response = $response . "\n" . end($arr);
@@ -443,6 +433,15 @@ class JLibController extends Controller
             foreach ($unmovie_match[1] as $v) {
                 $arr      = explode('/', $v);
                 $response = $response . "\n" . end($arr);
+            }
+
+            if (count($pages_match[1]) || count($unpages_match[1])) {
+                // 需要翻页
+                $page = isset($page) ? $page : 1;
+
+                $response .= "\n\n您当前在第 {$page} 页, 下一页请回复 {$code}@" . ($page + 1);
+
+                return $response;
             }
 
             return $response;
@@ -462,6 +461,6 @@ class JLibController extends Controller
      */
     public function rand_code_from_cache()
     {
-        return Redis::srandmember('best_rated');
+        return app('redis')->srandmember('best_rated');
     }
 }
