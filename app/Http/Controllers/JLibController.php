@@ -161,7 +161,7 @@ class JLibController extends Controller
         preg_match_all($html_code_pattern, $res, $code_match);
         preg_match($best_guess_pattern, $res, $best_guess_match);
 
-        if (!empty($code_match[1])) {
+        if (!empty($code_match[1]) && !empty($best_guess_match)) {
             $code_only = array_filter(array_map(function ($each) {
                 preg_match('#[a-zA-Z]+-\d{3}#', $each, $code_match);
 
