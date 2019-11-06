@@ -69,11 +69,12 @@ class JLibController extends Controller
                 $return = self::add_js_proxy($return, config('jlib.add_js_proxy'));
             }
 
-            return $return;
+            return self::add_custom_tail($return);
         }, Message::TEXT);
 
         $app->server->push(function ($message) {
-            return $this->get_info_by_image($message['PicUrl']) ?: '搜索结果为空, 请保证图中人脸清晰可见';
+            $return = $this->get_info_by_image($message['PicUrl']) ?: '搜索结果为空, 请保证图中人脸清晰可见';
+            return self::add_custom_tail($return);
         }, Message::IMAGE);
 
         $app->server->push(function ($message) {
@@ -85,6 +86,17 @@ class JLibController extends Controller
         }, Message::EVENT);
 
         return $app->server->serve();
+    }
+
+    /**
+     * 加小尾巴
+     *
+     * @param  string  $content
+     * @return string
+     */
+    public static function add_custom_tail($content)
+    {
+        return $content . "\n" . config('jlib.custom_tail');
     }
 
     /**

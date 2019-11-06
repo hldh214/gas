@@ -14,5 +14,6 @@ return [
     'javlibrary_base_url'   => env('JAVLIBRARY_BASE_URL', 'http://www.javlibrary.com/'),
     'timeout'               => env('TIMEOUT', 5),
     'no_sensitive_contents' => env('NO_SENSITIVE_CONTENTS', false),
-    'add_js_proxy'          => env('ADD_JS_PROXY', false)
+    'add_js_proxy'          => env('ADD_JS_PROXY', false),
+    'custom_tail'           => env('CUSTOM_TAIL', '')
 ];
