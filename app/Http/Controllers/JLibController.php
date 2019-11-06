@@ -91,8 +91,8 @@ class JLibController extends Controller
      * 加前置代理
      * Credit: https://github.com/EtherDream/jsproxy-browser
      *
-     * @param string $content
-     * @param string $js_proxy_url
+     * @param  string  $content
+     * @param  string  $js_proxy_url
      * @return string|string[]|null
      */
     public static function add_js_proxy($content, $js_proxy_url = 'https://zjcqoo.github.io/-----')
@@ -103,7 +103,7 @@ class JLibController extends Controller
     /**
      * 去 a 链接(敏感图片)
      *
-     * @param string $content
+     * @param  string  $content
      * @return string|string[]|null
      */
     public static function grep_sensitive_content($content)
@@ -114,7 +114,7 @@ class JLibController extends Controller
     /**
      * 从 Redis 取 trending 计算 top N
      *
-     * @param int $n
+     * @param  int  $n
      * @return string
      */
     public function top_n($n = 10)
@@ -185,9 +185,9 @@ class JLibController extends Controller
     /**
      * 传入正规拼写的番号, 返回查询到的磁链, 查不到则返回false
      *
-     * @param string $code
-     * @param int    $hd
-     * @param array  $extra_data
+     * @param  string  $code
+     * @param  int  $hd
+     * @param  array  $extra_data
      * @return mixed
      */
     public function get_magnet($code, $hd = self::QUALITY_HD, $extra_data = null)
@@ -266,7 +266,7 @@ class JLibController extends Controller
     /**
      * 传入搜索结果唯一的番号, 需要正规拼写, 返回查询到的信息(带磁链)
      *
-     * @param string $code
+     * @param  string  $code
      * @return string | boolean
      * @throws Exception
      */
@@ -335,7 +335,7 @@ class JLibController extends Controller
     /**
      * array => <a href=""></a>
      *
-     * @param array $urls
+     * @param  array  $urls
      * @return string
      */
     public function make_preview($urls)
@@ -355,7 +355,7 @@ class JLibController extends Controller
     /**
      * 传入用户的原始输入, 返回查询到的信息(带磁链)
      *
-     * @param string $code
+     * @param  string  $code
      * @return string
      * @throws Exception
      */
@@ -381,7 +381,7 @@ class JLibController extends Controller
         }
 
         $movie_pattern = '/class="movie-box" href="(.+)">/';  // 单页影片数
-        $pages_pattern = '#href="/search/\S+/(\d+)">\d+#';  // 页数
+        $pages_pattern = '#href="/search/\S+/(\d+)">\d+#';    // 页数
 
         $promises = [
             $this->opener->getAsync('/search/' . urlencode($code) . (isset($page) ? '/' . $page : null)),
