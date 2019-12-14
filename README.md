@@ -2,8 +2,6 @@
 
 [简体中文](.github/README-zh-CN.md)
 
-![qrcode_for_gh_459aed460bf4_258](https://user-images.githubusercontent.com/5501843/61165886-d45bc580-a558-11e9-8696-65ba98806e51.jpg)
-
 ## Table of Contents
 
 - [Sources](#sources)
