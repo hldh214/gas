@@ -8,6 +8,7 @@
         "php": "^7.3",
         "ext-json": "*",
         "ext-mbstring": "*",
+        "fideloper/proxy": "^4.4",
         "laravel/framework": "^8.0",
         "overtrue/laravel-wechat": "^5.1"
     },
