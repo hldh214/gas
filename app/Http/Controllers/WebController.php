@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Services\JavbusService;
-use GuzzleHttp\Exception\GuzzleException;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ class WebController extends Controller
      * @param  Request  $request
      * @param  JavbusService  $service
      * @return Application|ResponseFactory|Response
-     * @throws GuzzleException
+     * @throws Exception
      */
     public function query(Request $request, JavbusService $service)
     {
@@ -35,8 +35,13 @@ class WebController extends Controller
         return response($service->get_info($code));
     }
 
-    public function rand()
+    /**
+     * @param  JavbusService  $service
+     * @return Application|ResponseFactory|Response
+     * @throws Exception
+     */
+    public function rand(JavbusService $service)
     {
-
+        return response($service->rand());
     }
 }

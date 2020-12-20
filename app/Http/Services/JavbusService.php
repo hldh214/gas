@@ -6,7 +6,6 @@ namespace App\Http\Services;
 
 use Exception;
 use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Http;
 
 class JavbusService
@@ -18,10 +17,12 @@ class JavbusService
      */
     private $guzzle_options;
 
+    /**
+     * JavbusService constructor.
+     */
     public function __construct()
     {
         $this->guzzle_options = [
-            'base_uri'    => config('jlib.javbus_base_url'),
             'http_errors' => false,
             'timeout'     => config('jlib.timeout'),
             'verify'      => false
@@ -32,9 +33,8 @@ class JavbusService
      * 传入搜索结果唯一的番号, 需要正规拼写, 返回查询到的信息(带磁链)
      *
      * @param  string  $code
-     * @return string | boolean
+     * @return array | boolean
      * @throws Exception
-     * @throws GuzzleException
      */
     public function get_info($code)
     {
@@ -49,7 +49,7 @@ class JavbusService
             '/<a class="sample-box" href="(.+?)">/';
 
         try {
-            $res = Http::withOptions($this->guzzle_options)->get('/' . $code)->body();
+            $res = Http::withOptions($this->guzzle_options)->get(config('jlib.javbus_base_url') . '/' . $code)->body();
         } catch (Exception $exception) {
             return false;
         }
@@ -69,26 +69,18 @@ class JavbusService
         if ('0000-00-00' == $date_match[1]) {
             $date_match[1] = '未知';
         }
-        $response = '车牌&车型&司机: ' . $title_match[1]
-            . "\n" . '发车日期: ' . $date_match[1];
 
-        $response .= "\n" . '类型: ' . (empty($uncensored_flag_match) ? '骑兵' : '步兵');
-
-        $response .= "\n" . '<a href="'
-            . str_replace('javbus.com', 'javcdn.pw', $cover_match[1])
-            . '">封面图</a>';
-
-        if ($pic_match[1]) {
-            $response .= $this->make_preview($pic_match[1]);
-        }
-
+        $title = $title_match[1];
+        $date = $date_match[1];
+        $type = empty($uncensored_flag_match) ? '骑兵' : '步兵';
+        $cover = str_replace('javbus.com', 'javcdn.pw', $cover_match[1]);
+        $preview = $pic_match[1];
         $magnet = $this->get_magnet(
             $code, self::QUALITY_HD,
             compact('gid_match', 'uc_match', 'cover_match')
         ) ?: '找不到神秘代码';
-        $response .= "\n" . $magnet;
 
-        return $response;
+        return compact('title', 'date', 'type', 'cover', 'preview', 'magnet');
     }
 
     /**
@@ -129,7 +121,9 @@ class JavbusService
             // 以上三个正则用于匹配 ajax 查询 javbus 上的磁链所需要的参数
 
             try {
-                $res = Http::withOptions($this->guzzle_options)->get('/' . $code)->body();
+                $res = Http::withOptions($this->guzzle_options)->get(
+                    config('jlib.javbus_base_url') . '/' . $code
+                )->body();
             } catch (ConnectException $exception) {
                 return false;
             }
@@ -147,7 +141,8 @@ class JavbusService
                     'Referer' => config('jlib.javbus_base_url')
                 ]
             ], $this->guzzle_options))->get(
-                '/ajax/uncledatoolsbyajax.php?gid=' . $gid_match[1] . '&img=' . $cover_match[1] . '&uc=' . $uc_match[1]
+                config('jlib.javbus_base_url') . '/ajax/uncledatoolsbyajax.php?gid=' .
+                $gid_match[1] . '&img=' . $cover_match[1] . '&uc=' . $uc_match[1]
             )->body();
         } catch (ConnectException $exception) {
             return false;
@@ -185,5 +180,22 @@ class JavbusService
         }
 
         return false;
+    }
+
+    /**
+     * @return bool|string
+     * @throws Exception
+     */
+    public function rand()
+    {
+        $code_pattern = '/<a href="\.\/\?v=.+?" title="(\S+) {1}/';
+
+        $res = Http::withOptions($this->guzzle_options)->get(
+            config('jlib.javlibrary_base_url') . '/tw/vl_bestrated.php?list'
+        )->body();
+
+        preg_match_all($code_pattern, $res, $code_match);
+
+        return $this->get_info(collect($code_match[1])->random());
     }
 }
