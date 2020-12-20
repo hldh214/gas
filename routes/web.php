@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\JLibController;
+use App\Http\Controllers\WebController;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::any('/JLib', [JLibController::class, 'index']);
+Route::group([
+    'prefix' => 'web'
+], function (Router $router) {
+    $router->any('query', [WebController::class, 'query']);
+    $router->any('rand', [WebController::class, 'rand']);
+});
+
