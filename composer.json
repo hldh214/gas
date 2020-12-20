@@ -1,10 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "hldh214/gas",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "[NSFW]gas station for skilled driver",
     "keywords": [
-        "framework",
-        "laravel"
+        "secret-code",
+        "gas-station",
+        "skilled-driver",
+        "nsfw"
     ],
     "license": "MIT",
     "require": {
