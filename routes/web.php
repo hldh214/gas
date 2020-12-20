@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,4 +13,6 @@
 |
 */
 
-Route::any('/JLib', 'JLibController@index');
+Route::get('/', function () {
+    return view('welcome');
+});
