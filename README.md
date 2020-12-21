@@ -24,8 +24,7 @@
 
 1. Cloned it from github or download package as zip.
 2. Unzip code to your webserver.
-3. `composer update -vvv & php artisan crawl`
-4. For more information [click here](https://www.easywechat.com/docs/master)/[or here](https://laravel.com/docs/5.6/installation)
+3. `composer install -vvv`
 
 **From Docker**
 
@@ -34,7 +33,11 @@
 [![Docker Automated buil](https://img.shields.io/docker/automated/hldh214/gas.svg)](https://hub.docker.com/r/hldh214/gas/)
 
 ``` sh
-$ docker run -d -p 8000:80 hldh214/gas
+$ docker run -d -p 8964:8964 hldh214/gas
+# query by code
+$ curl -s "localhost:8964/web/query?code=ABS-130" | jq
+# rand
+$ curl -s "localhost:8964/web/rand" | jq
 ```
 
 ### Future features
