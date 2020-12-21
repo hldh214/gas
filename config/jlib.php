@@ -15,5 +15,6 @@ return [
     'timeout'               => env('TIMEOUT', 5),
     'no_sensitive_contents' => env('NO_SENSITIVE_CONTENTS', false),
     'add_js_proxy'          => env('ADD_JS_PROXY', false),
-    'custom_tail'           => env('CUSTOM_TAIL', '')
+    'custom_tail'           => env('CUSTOM_TAIL', ''),
+    'rand_list_maxlen'      => env('RAND_LIST_MAXLEN', 64),
 ];

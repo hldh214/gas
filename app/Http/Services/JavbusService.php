@@ -4,9 +4,12 @@
 namespace App\Http\Services;
 
 
+use App\Console\Commands\RandCrawler;
 use Exception;
 use GuzzleHttp\Exception\ConnectException;
+use Illuminate\Redis\Connections\PhpRedisConnection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Redis;
 
 class JavbusService
 {
@@ -38,14 +41,14 @@ class JavbusService
      */
     public function get_info($code)
     {
-        $title_pattern = '/<h3>(.+)<\/h3>/';
-        $date_pattern = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
-        $cover_pattern = /** @lang RegExp */
+        $title_pattern           = '/<h3>(.+)<\/h3>/';
+        $date_pattern            = '/<\/span> *(\d+-\d+-\d+) *<\/p>/';
+        $cover_pattern           = /** @lang RegExp */
             '/<a class="bigImage" href="(.+?)">/';
-        $gid_pattern = '/gid *= *(\d+)/';
-        $uc_pattern = '/uc *= *(\d+);/';
+        $gid_pattern             = '/gid *= *(\d+)/';
+        $uc_pattern              = '/uc *= *(\d+);/';
         $uncensored_flag_pattern = '/<li\s*class="active"><a\s*href=".+uncensored">/';
-        $pic_pattern = /** @lang RegExp */
+        $pic_pattern             = /** @lang RegExp */
             '/<a class="sample-box" href="(.+?)">/';
 
         try {
@@ -70,33 +73,17 @@ class JavbusService
             $date_match[1] = '未知';
         }
 
-        $title = $title_match[1];
-        $date = $date_match[1];
-        $type = empty($uncensored_flag_match) ? '骑兵' : '步兵';
-        $cover = str_replace('javbus.com', 'javcdn.pw', $cover_match[1]);
+        $title   = $title_match[1];
+        $date    = $date_match[1];
+        $type    = empty($uncensored_flag_match) ? '骑兵' : '步兵';
+        $cover   = str_replace('javbus.com', 'javcdn.pw', $cover_match[1]);
         $preview = $pic_match[1];
-        $magnet = $this->get_magnet(
+        $magnet  = $this->get_magnet(
             $code, self::QUALITY_HD,
             compact('gid_match', 'uc_match', 'cover_match')
-        ) ?: '找不到神秘代码';
+        ) ?: '';
 
         return compact('title', 'date', 'type', 'cover', 'preview', 'magnet');
-    }
-
-    /**
-     * array => <a href=""></a>
-     *
-     * @param  array  $urls
-     * @return string
-     */
-    public function make_preview($urls)
-    {
-        $return = "";
-        foreach ($urls as $index => $url) {
-            $return .= "\n<a href=\"" . $url . '">截图' . $index . '</a>';
-        }
-
-        return $return;
     }
 
     /**
@@ -111,13 +98,13 @@ class JavbusService
     {
         if ($extra_data) {
             $cover_match = $extra_data['cover_match'];
-            $gid_match = $extra_data['gid_match'];
-            $uc_match = $extra_data['uc_match'];
+            $gid_match   = $extra_data['gid_match'];
+            $uc_match    = $extra_data['uc_match'];
         } else {
             $cover_pattern = /** @lang RegExp */
                 '/<a class="bigImage" href="(.+?)">/';
-            $gid_pattern = '/gid *= *(\d+)/';
-            $uc_pattern = '/uc *= *(\d+);/';
+            $gid_pattern   = '/gid *= *(\d+)/';
+            $uc_pattern    = '/uc *= *(\d+);/';
             // 以上三个正则用于匹配 ajax 查询 javbus 上的磁链所需要的参数
 
             try {
@@ -148,7 +135,7 @@ class JavbusService
             return false;
         }
 
-        $hd_mag_pattern = /** @lang RegExp */
+        $hd_mag_pattern     = /** @lang RegExp */
             '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*.+?<a#';
         $normal_mag_pattern = /** @lang RegExp */
             '#<td width="70%".+?>\s*<a.+?href="(magnet:\?xt=urn:btih:\w{40}).*?">\s*\S+\s*</a#';
@@ -188,14 +175,15 @@ class JavbusService
      */
     public function rand()
     {
-        $code_pattern = '/<a href="\.\/\?v=.+?" title="(\S+) {1}/';
+        /** @var PhpRedisConnection $redis */
+        $redis = Redis::connection();
 
-        $res = Http::withOptions($this->guzzle_options)->get(
-            config('jlib.javlibrary_base_url') . '/tw/vl_bestrated.php?list'
-        )->body();
+        $res = $redis->lpop(RandCrawler::RAND_LIST);
 
-        preg_match_all($code_pattern, $res, $code_match);
+        if (!$res) {
+            return false;
+        }
 
-        return $this->get_info(collect($code_match[1])->random());
+        return json_decode($res, true);
     }
 }
