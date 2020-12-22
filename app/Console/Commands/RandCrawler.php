@@ -63,6 +63,7 @@ class RandCrawler extends Command
             $current_list_size = $redis->lLen(self::RAND_LIST);
 
             if ($current_list_size > config('jlib.rand_list_maxlen')) {
+                sleep(4);
                 continue;
             }
 
